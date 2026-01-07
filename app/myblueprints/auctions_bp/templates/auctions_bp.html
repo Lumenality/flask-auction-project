@@ -1,0 +1,22 @@
+{% extends 'baselayout.html' %}
+{% block title %}
+All Auctions
+{% endblock %}
+{% block content %}
+    <h1>Ongoing Auctions</h1>
+    <table>
+        {% for auction in auctions %}
+        <div class="card" style="width: 18rem;">
+        <img src="{{ auction.image_url }}" class="card-img-top" alt="{{ auction.description }}">
+        <div class="card-body">
+            <h5 class="card-title">{{ auction.description }}</h5>
+            <p class="card-text">
+            Starting Bid: ${{ auction.starting_bid }}
+            <br>Duration: {{ auction.auction_duration }} days.
+            </p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+        </div>
+        </div>
+        {% endfor %}
+    </table>
+{% endblock %}
