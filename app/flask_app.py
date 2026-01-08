@@ -53,10 +53,12 @@ def registrera_blueprints(app):
     # Imports
     from .myblueprints.auctions_bp.auctions_bp import auctions_bp
     from .myblueprints.auctionadmin_bp.auctionadmin_bp import auctionadmin_bp
+    from .myblueprints.auctions_rest_bp.auctions_rest_bp import auctions_rest_bp
 
     # Registration
     app.register_blueprint(auctions_bp, url_prefix='/auctions')
     app.register_blueprint(auctionadmin_bp, url_prefix='/auctionadmin')
+    app.register_blueprint(auctions_rest_bp, url_prefix='/api/v1/auctions')
 
 def create_routes(app):
     """
