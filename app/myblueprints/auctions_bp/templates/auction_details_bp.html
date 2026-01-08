@@ -1,0 +1,50 @@
+{% extends 'baselayout.html' %} {% block title %} Auction | {{
+auction.description }} {% endblock %} {%block content %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb breadcrumb-chevron p-3 bg-body-tertiary rounded-3">
+    <li class="breadcrumb-item">
+      <a class="link-body-emphasis" href="#">
+        <svg class="bi" width="16" height="16" aria-hidden="true" fill="black">
+          <use xlink:href="#house-door-fill"></use>
+        </svg>
+        <span class="visually-hidden">Home</span>
+      </a>
+    </li>
+    <li class="breadcrumb-item">
+      <a class="link-body-emphasis fw-semibold text-decoration-none" href="#"
+        >Auctions</a
+      >
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">{{ auction.description | truncate(20, True, '...')}}</li>
+  </ol>
+</nav>
+<div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+  <div class="col-10 col-sm-8 col-lg-6">
+    <img
+      src="{{ auction.image_url }}"
+      class="d-block mx-lg-auto img-fluid"
+      alt="{{ auction.description }}"
+      width="700"
+      height="500"
+      loading="lazy"
+    />
+  </div>
+  <div class="col-lg-6">
+    <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">
+      {{ auction.description }}
+    </h1>
+    <p class="lead">
+      Starting Bid: ${{ auction.starting_bid }}
+      <br />Duration: {{ auction.auction_duration }} days.
+    </p>
+    <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+      <!--       <button type="button" class="btn btn-primary btn-lg px-4 me-md-2">
+        Primary
+      </button>
+      <button type="button" class="btn btn-outline-secondary btn-lg px-4">
+        Default
+      </button> -->
+    </div>
+  </div>
+</div>
+{% endblock %}

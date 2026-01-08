@@ -17,7 +17,7 @@ def skapa_app():
 
     # SÄTT UPP APPENS INSTÄLLNINGAR
     app.config['SECRET_KEY'] = 'din_superhemliga_nyckel'   # Behöv för att sessions/inloggning ska vara säkert
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///auctions.db'  # Pekar ut vilken databas som ska användas
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///auctionsite.db'  # Pekar ut vilken databas som ska användas
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False   # Spara minne och processorkraft
 
     # KOPPLA APPEN TILL DATABASEN & SKAPA TABELLER
