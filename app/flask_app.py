@@ -16,7 +16,7 @@ def skapa_app():
     app = Flask(__name__)
 
     # SÄTT UPP APPENS INSTÄLLNINGAR
-    app.config['SECRET_KEY'] = 'din_superhemliga_nyckel'   # Behöv för att sessions/inloggning ska vara säkert
+    app.config['SECRET_KEY'] = '86cff1dfb45dcaec470c4b3dfcfe6ee6'   # Behöv för att sessions/inloggning ska vara säkert
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///auctionsite.db'  # Pekar ut vilken databas som ska användas
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False   # Spara minne och processorkraft
 
@@ -52,9 +52,11 @@ def registrera_blueprints(app):
     """
     # Imports
     from .myblueprints.auctions_bp.auctions_bp import auctions_bp
+    from .myblueprints.auctionadmin_bp.auctionadmin_bp import auctionadmin_bp
 
     # Registration
     app.register_blueprint(auctions_bp, url_prefix='/auctions')
+    app.register_blueprint(auctionadmin_bp, url_prefix='/auctionadmin')
 
 def create_routes(app):
     """

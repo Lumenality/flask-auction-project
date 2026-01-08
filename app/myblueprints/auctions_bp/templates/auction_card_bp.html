@@ -2,8 +2,7 @@
 <img
     src="{{ auction.image_url }}"
     class="bd-placeholder-img card-img-top"
-    width="100%"
-    height="225"
+    style="max-height: 225px; object-fit: cover;"
     alt="{{ auction.description }}"
 />
 
@@ -17,11 +16,16 @@
     class="d-flex justify-content-between align-items-center"
     >
     <div class="btn-group">
-        <a
+        <a type="button"
         href="{{ url_for('auctions_bp.auction_details', auction_id=auction.id) }}"
-        class="btn btn-sm btn-outline-secondary"
-        >View</a
-        >
+        class="btn btn-primary">
+        View
+        </a>
+        <a type="button"
+        href="{{ url_for('auctionadmin_bp.delete_auction', auction_id=auction.id) }}"
+        class="btn btn-danger">
+        Delete
+        </a>
     </div>
     </div>
 </div>
