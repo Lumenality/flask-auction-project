@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vite App</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.2.37/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<div id="div_id">
+<!--   Layouten för våran Vue app -->
+</div>
+<script type="module" src="/src/main.js">
+  const app =Vue.createApp({
+    delimiters: ['[[',']]'], // Use other delimiters than default to avoid collision with Jinja2
+    data() {
+      return {
+        // Create varialbes/objects/arrays needed in the vue app
+      };
+    },
+
+    mounted() {
+      // Call method like get_rest_data() to get initial data from rest api
+
+    },
+
+    methods: {
+      get_rest_data() {
+
+      }//end get_rest_data
+
+    },
+  });//end Vue.createApp
+
+  app.mount('#div_id'); // Mount the Vue app to the div with id 'div_id'
+</script>
+</body>
+</html>
