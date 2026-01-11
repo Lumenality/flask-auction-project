@@ -16,7 +16,8 @@ def get_all_auctions():
 def get_auction_by_id(auction_id):
     auction = auctions_repo.find_by_id(auction_id)
     if auction:
-        return render_template('auction_details_bp.html', auction=auction)
+        bids = auctions_repo.get_bids_for_auction(auction_id)
+        return render_template('auction_details_bp.html', auction=auction, bids=bids)
     else:
         return jsonify({"message": "Auction not found"}), 404
     
@@ -71,7 +72,7 @@ def delete_auction(auction_id):
     else:
         return jsonify({"message": "You are not authorized to delete auctions."}), 403
 
-@auctions_bp_sqlalchemy.route('/<int:auction_id>')
+""" @auctions_bp_sqlalchemy.route('/<int:auction_id>')
 def auction_details(auction_id):
     found_auction = None
     for auction in auctions_repo.get_all():
@@ -81,7 +82,7 @@ def auction_details(auction_id):
     if found_auction:
         return render_template('auction_details_bp.html', auction=found_auction)
     else:
-        return 'Auction not found', 404
+        return 'Auction not found', 404 """
     
 # ---------------------- End of Auction Routes ------------------ #
 
@@ -107,3 +108,40 @@ def dislike_auction(auction_id):
         return redirect(url_for('login_bp.login'))
     
 # ------------------------- End of Functions --------------------- #
+
+# ---------------------- Auction Routes ------------------ #
+@auctions_bp_sqlalchemy.route('/<int:auction_id>/bids/add', methods=['GET'])
+def add_bid_form(auction_id):
+    auction = auctions_repo.find_by_id(auction_id)
+    if not auction:
+        return jsonify({"message": "Auction not found"}), 404
+
+    highest = auctions_repo.get_highest_bid_amount(auction_id)
+    suggested_amount = (highest + 1) if highest is not None else (int(auction.starting_bid) + 1)
+
+    return render_template(
+        'add_bid_form.html',
+        auction_id=auction_id,
+        suggested_amount=suggested_amount
+    )
+
+@auctions_bp_sqlalchemy.route('/<int:auction_id>/bids/add', methods=['POST'])
+def add_bid(auction_id):
+    if current_user.is_authenticated:
+        username = getattr(current_user, "username", None) or str(current_user.get_id())
+        highest = auctions_repo.get_highest_bid_amount(auction_id)
+        if highest is not None and int(request.form.get('amount')) <= highest:
+            flash(f'Your bid must be higher than the current highest bid of {highest}.', 'error')
+            return redirect(url_for('auctions_bp_sqlalchemy.add_bid_form', auction_id=auction_id))
+        
+        auctions_repo.add_bid(
+            auction_id,
+            username,
+            int(request.form.get('amount'))
+        )
+    else:
+        flash("You must be logged in to place a bid.", "error")
+        return redirect(url_for('login_bp.login'))
+
+    flash(f'You placed a bid of {request.form.get("amount")} on auction with id: {auction_id}.', 'success')
+    return redirect(url_for('auctions_bp_sqlalchemy.get_auction_by_id', auction_id=auction_id))

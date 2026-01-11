@@ -17,7 +17,7 @@
     >
     <div class="btn-group">
         <a type="button"
-        href="{{ url_for('auctions_bp_sqlalchemy.auction_details', auction_id=auction.id) }}"
+        href="{{ url_for('auctions_bp_sqlalchemy.get_auction_by_id', auction_id=auction.id) }}"
         class="btn btn-primary">
         View
         </a>

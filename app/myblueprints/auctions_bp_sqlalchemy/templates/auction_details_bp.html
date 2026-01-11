@@ -33,36 +33,41 @@ auction.description }} {% endblock %} {%block content %}
       {{ auction.description }}
     </h1>
     <div class="d-flex flex-row mb-3">
-<!--       <a  type="button"
-          href="{{ url_for('auctions_bp_sqlalchemy.like_auction', auction_id=auction.id) }}"
-          class="thumb-counter d-flex flex-row align-items-center me-3 gap-1 text-success"> 
-        <p class="my-auto">{{ auction.likes }}</p>
-        <i class="bi like-hands bi-hand-thumbs-up"></i>
-      </a> -->
-      <form method="post" action="{{ url_for('auctions_bp_sqlalchemy.like_auction', auction_id=auction.id) }}">
-      <div type="submit" class="thumb-counter d-flex flex-row align-items-center me-3 p-2 gap-1 text-success">
-        <p class="my-auto">{{ auction.likes }}</p>
-        <i class="bi like-hands bi-hand-thumbs-up"></i>
-      </div>
-      </form>
-      <form method="post" action="{{ url_for('auctions_bp_sqlalchemy.dislike_auction', auction_id=auction.id) }}">
-      <div type="submit" class="thumb-counter d-flex flex-row align-items-center me-3 p-2 gap-1 text-danger">
-        <p class="my-auto">{{ auction.dislikes }}</p>
-        <i class="bi like-hands bi-hand-thumbs-down"></i>
-      </div>
-      </form>
-<!--       <a  type="button"
-          href="{{ url_for('auctions_bp_sqlalchemy.dislike_auction', auction_id=auction.id) }}"
-          class="thumb-counter d-flex flex-row align-items-center me-3 gap-1 text-danger">
-        <p class="my-auto">{{ auction.dislikes }}</p>
-        <i class="bi like-hands bi-hand-thumbs-down"></i>
-      </a> -->
-    </div>
+
+  <form method="post" action="{{ url_for('auctions_bp_sqlalchemy.like_auction', auction_id=auction.id) }}">
+    <button type="submit"
+            class="thumb-counter d-flex flex-row align-items-center me-3 p-2 gap-1 text-success border-0 bg-transparent">
+      <p class="my-auto">{{ auction.likes }}</p>
+      <i class="bi like-hands bi-hand-thumbs-up"></i>
+    </button>
+  </form>
+
+  <form method="post" action="{{ url_for('auctions_bp_sqlalchemy.dislike_auction', auction_id=auction.id) }}">
+    <button type="submit"
+            class="thumb-counter d-flex flex-row align-items-center me-3 p-2 gap-1 text-danger border-0 bg-transparent">
+      <p class="my-auto">{{ auction.dislikes }}</p>
+      <i class="bi like-hands bi-hand-thumbs-down"></i>
+    </button>
+  </form>
+
+</div>
     <p class="lead">
       Starting Bid: ${{ auction.starting_bid }}
       <br />Duration: {{ auction.duration }} days.
     </p>
     <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+    {% for bid in bids %}
+      <div class="card mb-2" style="width: 18rem;">
+        <div class="card-body">
+          <h5 class="card-title">Bid: ${{ bid.amount }}</h5>
+          <h6 class="card-subtitle mb-2 text-body-secondary">By: {{ bid.username }}</h6>
+          <p class="card-text"><small class="text-body-secondary">At: {{ bid.created_at }}</small></p>
+        </div>
+      </div>
+    {% endfor %}
+      <a  href="{{ url_for('auctions_bp_sqlalchemy.add_bid_form', auction_id=auction.id) }}"
+          class="btn btn-primary btn-lg px-4 me-md-2">Place a Bid</a>
+
       <!--       <button type="button" class="btn btn-primary btn-lg px-4 me-md-2">
         Primary
       </button>

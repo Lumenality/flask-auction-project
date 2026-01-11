@@ -1,9 +1,9 @@
 # Import necessary modules from SQLAlchemy
 from sqlalchemy import create_engine, Column, Integer, String, Float
+from sqlalchemy import DateTime, ForeignKey, func
 from sqlalchemy.exc import OperationalError
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 from typing import Optional, List
-
 # Create a Base class to define database models
 Base = declarative_base()
 
@@ -17,6 +17,21 @@ class Auction(Base):
     image_url = Column(String(128), nullable=True)
     likes = Column(Integer, default=0)
     dislikes = Column(Integer, default=0)
+    bids = relationship("Bid", back_populates="auction", cascade="all, delete-orphan")
+
+class Bid(Base):
+    __tablename__ = "bids"
+    id = Column(Integer, primary_key=True)
+    auction_id = Column(Integer, ForeignKey("auctions.id"), nullable=False)
+
+    # Keep it simple for now (matches your “username” idea).
+    # Better long-term: store user_id and relate to a User table.
+    username = Column(String(80), nullable=False)
+
+    amount = Column(Integer, nullable=False)  # or Float, but Integer is simpler for currency-like bids
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+    auction = relationship("Auction", back_populates="bids")
 
 # Define a class to handle database operations for the Auction model 
 class AuctionRepository:
@@ -111,3 +126,33 @@ class AuctionRepository:
                 return auction.dislikes
             else:
                 return None
+            
+    def add_bid(self, auction_id: int, username: str, amount: int) -> Optional[Bid]:
+        with self.Session() as session:
+            auction = session.query(Auction).filter_by(id=auction_id).first()
+            if not auction:
+                return None
+
+            bid = Bid(auction_id=auction_id, username=username, amount=amount)
+            session.add(bid)
+            session.commit()
+            session.refresh(bid)
+            return bid
+
+    def get_bids_for_auction(self, auction_id: int) -> List[Bid]:
+        with self.Session() as session:
+            return (
+                session.query(Bid)
+                .filter(Bid.auction_id == auction_id)
+                .order_by(Bid.created_at.desc())
+                .all()
+            )
+        
+    def get_highest_bid_amount(self, auction_id: int) -> Optional[int]:
+        with self.Session() as session:
+            highest = (
+                session.query(func.max(Bid.amount))
+                .filter(Bid.auction_id == auction_id)
+                .scalar()
+            )
+            return highest  # None if no bids yet
