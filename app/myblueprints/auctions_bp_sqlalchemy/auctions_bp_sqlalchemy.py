@@ -10,19 +10,19 @@ auctions_repo = AuctionRepository()
 def get_all_auctions():
     auctions_list = auctions_repo.get_all()
     #return auctions, need to add the subfoldersname, carviews
-    return render_template('auctionviews/auctions_bp.html', auctions=auctions_list)
+    return render_template('auctions_bp.html', auctions=auctions_list)
 
 @auctions_bp_sqlalchemy.route('/<int:auction_id>', methods=['GET'])
 def get_auction_by_id(auction_id):
     auction = auctions_repo.find_by_id(auction_id)
     if auction:
-        return render_template('auctionviews/auction_details_bp.html', auction=auction)
+        return render_template('auction_details_bp.html', auction=auction)
     else:
         return jsonify({"message": "Auction not found"}), 404
     
 @auctions_bp_sqlalchemy.route('/add', methods=['GET'])
 def add_auction_form():
-    return render_template('auctionviews/add_auction_form.html')
+    return render_template('add_auction_form.html')
 
 @auctions_bp_sqlalchemy.route('/add', methods=['POST'])
 def add_auction():
@@ -42,7 +42,7 @@ def add_auction():
 def edit_auction(auction_id):
     auction = auctions_repo.find_by_id(auction_id)
     if auction:
-        return render_template('auctionviews/edit_auction_form.html', auction=auction)
+        return render_template('edit_auction_form.html', auction=auction)
     else:
         return jsonify({"message": "Auction not found"}), 404
     
@@ -79,7 +79,7 @@ def auction_details(auction_id):
             found_auction = auction
             break
     if found_auction:
-        return render_template('auctionviews/auction_details_bp.html', auction=found_auction)
+        return render_template('auction_details_bp.html', auction=found_auction)
     else:
         return 'Auction not found', 404
     
