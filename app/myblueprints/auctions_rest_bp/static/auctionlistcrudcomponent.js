@@ -103,7 +103,7 @@
       }//end get_rest_data
 
     },
-    template: `
+    template: /*html*/`
     <h1>Auktions Vue App</h1>
     <table>
       <tr v-for="(auction,index) in auctions" :key="auction.id">
