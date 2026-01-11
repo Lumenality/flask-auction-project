@@ -33,7 +33,7 @@ def skapa_app():
     # SÄTT UPP INLOGGNING (Flask-Login)
     login_manager = LoginManager()
     login_manager.init_app(app)                     # Koppla till appen
-    login_manager.login_view = 'auth_bp.login'      # Var ska man hamna om man inte är inloggad?
+    login_manager.login_view = 'login_bp.login'      # Var ska man hamna om man inte är inloggad?
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -54,11 +54,13 @@ def registrera_blueprints(app):
     from .myblueprints.auctions_bp.auctions_bp import auctions_bp
     from .myblueprints.auctionadmin_bp.auctionadmin_bp import auctionadmin_bp
     from .myblueprints.auctions_rest_bp.auctions_rest_bp import auctions_rest_bp
+    from .myblueprints.login_bp.login_bp import login_bp, login_manager # also see how this app is registered with the loginmanager above
 
     # Registration
     app.register_blueprint(auctions_bp, url_prefix='/auctions')
     app.register_blueprint(auctionadmin_bp, url_prefix='/auctionadmin')
     app.register_blueprint(auctions_rest_bp, url_prefix='/api/v1/auctions')
+    app.register_blueprint(login_bp, url_prefix='/loginuser')
 
 def create_routes(app):
     """
