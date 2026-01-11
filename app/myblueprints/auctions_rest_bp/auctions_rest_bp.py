@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, render_template, request
 import json
 import os
 
@@ -109,3 +109,69 @@ def delete_auction(auction_id):
     jsonFile.write(jsonString)
     jsonFile.close()
     return jsonify(deleted_auction), 200 # HTTP status code 200 means OK
+
+@auctions_rest_bp.route('/<int:auction_id>', methods=['PUT'])#https://localhost:5000/api/v1/auctions/1
+def update_auction(auction_id):
+    #läs in från JSON-filen till en lista
+    fileObject = open(AUCTIONS_FILE, "r")
+    jsonContent = fileObject.read()
+    fileObject.close()
+    #gör om JSON-strängen till en lista med dicts i
+    auctions = json.loads(jsonContent)
+    # loopa igenom lista för att finna den som skall uppdateras
+    auction_updated = {}
+    for auction in auctions:
+        if auction['id'] == auction_id:
+            #kom ihåg postman att ta raw och skicka som det description json {"description": "Mona Lisa"}
+            #läser in det skickade id datat och byter ut det för den funna auktionen
+            content_type = request.headers.get('Content-Type')
+            if (content_type == 'application/json'):
+                auction["description"]=request.json["description"]
+
+            #om det postas som formulär
+            if (request.form):
+                # läser in det från formuläret skickade namn datat, byter ut det för den funna personen
+                auction["description"]=request.form.get("description")
+
+            auction_updated = auction
+            break
+
+    # gör om lsita till jsonsträng
+    jsonString = json.dumps(auctions, indent=2)
+    # skriv json strängen till fil
+    jsonFile = open(AUCTIONS_FILE, "w")
+    #skriv tillbaka till fil
+    jsonFile.write(jsonString)
+    jsonFile.close()
+    return jsonify(auction_updated), 200 # HTTP status code 200 means OK
+
+#------------- återställ json med ursprungsdata --------------
+@auctions_rest_bp.route('/reset', methods=['POST'])#https://localhost:5000/api/v1/auctions/reset
+def reset_auctions_json():
+    original_auctions = [
+        {
+            "id": 1,
+            "description": "Skriet",
+            "starting_bid": 5,
+            "auction_duration": 7,
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/The_Scream.jpg/256px-The_Scream.jpg?20160501101333"
+        },
+        {
+            "id": 2,
+            "description": "Mona Lisa",
+            "starting_bid": 10,
+            "auction_duration": 7,
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Mona_Lisa.jpg/256px-Mona_Lisa.jpg?20100608143407"
+        }
+    ]
+    jsonString = json.dumps(original_auctions, indent=2)
+    jsonFile = open(AUCTIONS_FILE, "w")
+    jsonFile.write(jsonString)
+    jsonFile.close()
+    return jsonify({'message': 'Auktionsdata återställd'}), 200 # HTTP status code 200 means OK
+
+@auctions_rest_bp.route('/vueauctions', methods=['GET'])
+def showvue():
+    """Visar sidan som använder Vue.js för att hämta och visa auktioner."""
+    # 'vue_auctions.html' ska ligga i mappen 'templates' i projektroten.
+    return render_template('auctions_vue.html', titel='Auktioner med Vue.js')
