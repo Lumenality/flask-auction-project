@@ -100,3 +100,14 @@ class AuctionRepository:
                 return auction.likes
             else:
                 return None
+    
+    def increment_dislikes_for_auction(self, auction_id):
+        with self.Session() as session:
+            # Find the auction to increment dislikes
+            auction = session.query(Auction).filter_by(id=auction_id).first()
+            if auction:
+                auction.dislikes += 1
+                session.commit()
+                return auction.dislikes
+            else:
+                return None

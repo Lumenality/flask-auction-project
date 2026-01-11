@@ -33,18 +33,30 @@ auction.description }} {% endblock %} {%block content %}
       {{ auction.description }}
     </h1>
     <div class="d-flex flex-row mb-3">
-      <a  type="button"
+<!--       <a  type="button"
           href="{{ url_for('auctions_bp_sqlalchemy.like_auction', auction_id=auction.id) }}"
           class="thumb-counter d-flex flex-row align-items-center me-3 gap-1 text-success"> 
-        <p class="my-auto">+0</p>
+        <p class="my-auto">{{ auction.likes }}</p>
         <i class="bi like-hands bi-hand-thumbs-up"></i>
-      </a>
-      <a  type="button"
+      </a> -->
+      <form method="post" action="{{ url_for('auctions_bp_sqlalchemy.like_auction', auction_id=auction.id) }}">
+      <div type="submit" class="thumb-counter d-flex flex-row align-items-center me-3 p-2 gap-1 text-success">
+        <p class="my-auto">{{ auction.likes }}</p>
+        <i class="bi like-hands bi-hand-thumbs-up"></i>
+      </div>
+      </form>
+      <form method="post" action="{{ url_for('auctions_bp_sqlalchemy.dislike_auction', auction_id=auction.id) }}">
+      <div type="submit" class="thumb-counter d-flex flex-row align-items-center me-3 p-2 gap-1 text-danger">
+        <p class="my-auto">{{ auction.dislikes }}</p>
+        <i class="bi like-hands bi-hand-thumbs-down"></i>
+      </div>
+      </form>
+<!--       <a  type="button"
           href="{{ url_for('auctions_bp_sqlalchemy.dislike_auction', auction_id=auction.id) }}"
           class="thumb-counter d-flex flex-row align-items-center me-3 gap-1 text-danger">
-        <p class="my-auto">-0</p>
+        <p class="my-auto">{{ auction.dislikes }}</p>
         <i class="bi like-hands bi-hand-thumbs-down"></i>
-      </a>
+      </a> -->
     </div>
     <p class="lead">
       Starting Bid: ${{ auction.starting_bid }}
