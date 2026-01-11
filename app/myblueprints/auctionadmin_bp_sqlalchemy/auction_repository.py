@@ -19,10 +19,10 @@ class Auction(Base):
 # Define a class to handle database operations for the Auction model 
 class AuctionRepository:
     def __init__(self, db_uri: str = 'sqlite:///auctions_sqlalchemy.db'):
-        # Initialize the database connection
+        # Initialize the database connection and session factory
         self.engine: create_engine = create_engine(db_uri)
         self.Session: sessionmaker = sessionmaker(bind=self.engine)
-        self.file_name = file_name
+
         # Create tables if they don't exist
         try:
             Base.metadata.create_all(self.engine)

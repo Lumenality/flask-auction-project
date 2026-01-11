@@ -42,7 +42,7 @@ def skapa_app():
         Flask-Login behöver denna funktion för att återkoppla sessions till rätt user.
         """
         # TEMPORÄR LÖSNING FÖR JSON - BYT UT MOT RIKTIG DATABAS
-                # Load user from JSON file (same as in login_bp.py)
+        # Load user from JSON file (same as in login_bp.py)
         import json
         from .myblueprints.login_bp.login_bp import User
         with open('app/myblueprints/login_bp/users.json') as f:
@@ -64,7 +64,7 @@ def registrera_blueprints(app):
     # Imports
     from .myblueprints.auctions_bp.auctions_bp import auctions_bp
     #from .myblueprints.auctionadmin_bp.auctionadmin_bp import auctionadmin_bp
-    from .myblueprints.auctionadmin_sqlalchemy_bp.auctions_bp_sqlalchemy import auctions_bp_sqlalchemy
+    from .myblueprints.auctions_bp_sqlalchemy.auctions_bp_sqlalchemy import auctions_bp_sqlalchemy
     from .myblueprints.auctions_rest_bp.auctions_rest_bp import auctions_rest_bp
     from .myblueprints.login_bp.login_bp import login_bp, login_manager # also see how this app is registered with the loginmanager above
 

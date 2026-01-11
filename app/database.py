@@ -26,14 +26,11 @@ def init_db(app):
     # vilket krävs när man ska ändra saker i databasen (ex. skapa tabeller).
     with app.app_context():
         # --- Modell-import ---
-        # Viktigt! SQLAlchemy måste veta vilka modeller som finns innan tabeller kan skapas.
-        # Genom att importera modellklasserna, registreras de hos SQLAlchemy.
         from .models.auction import Auction           # Auktion-tabellen
+        from .models.user import User                 # User-tabellen
 
         # --- Tabellskapande ---
-        # db.create_all(): Skapar tabeller i databasen utifrån de modeller som är importerade.
-        # Om tabeller redan finns, händer inget (det är säkert att köra).
-        db.create_all()
+        db.create_all() # Creates all tables defined by the models if they do not already exist.
 
         # --- Startdata / Seeding ---
         # Här importeras funktioner som lägger till startdata i databasen, ex. några mäklare och bostäder.
