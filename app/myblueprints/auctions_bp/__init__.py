@@ -22,7 +22,7 @@ from flask import Blueprint
 # 1. SKAPA BLUEPRINTET
 # ============================================================
 bostader_bp = Blueprint(
-    'bostader_bp',                       # Internt namn/identifierare. Används för url_for('bostader_bp.hamta_lista').
+    'auctions_db_sqlalchemy',                    # Internt namn/identifierare. Används för url_for('bostader_bp.hamta_lista').
     __name__,                         # Python-modulens namn. Säger var Flask ska leta efter resurser.
     template_folder='templates',      # Säger till Flask var HTML-mallarna för detta blueprint ligger.
     # OBS: Detta blueprint registreras ofta utan url_prefix i huvudappen för att vara startsidan.

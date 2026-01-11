@@ -11,7 +11,7 @@ auction.description }} {% endblock %} {%block content %}
       </a>
     </li>
     <li class="breadcrumb-item">
-      <a class="link-body-emphasis fw-semibold text-decoration-none" href="{{ url_for('auctions_bp.our_auctions') }}"
+      <a class="link-body-emphasis fw-semibold text-decoration-none" href="{{ url_for('auctions_bp_sqlalchemy.get_all_auctions') }}"
         >Auctions</a
       >
     </li>

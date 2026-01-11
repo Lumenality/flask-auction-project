@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, current_app
 import os
 from flask import g
 
-from ..auctionadmin_sqlalchemy_bp.auction_repository import AuctionRepository
+from ..auctions_bp_sqlalchemy.auction_repository import AuctionRepository
 
 auctions_bp = Blueprint('auctions_bp', __name__, template_folder='templates')
 

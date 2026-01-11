@@ -69,9 +69,9 @@ def registrera_blueprints(app):
     from .myblueprints.login_bp.login_bp import login_bp, login_manager # also see how this app is registered with the loginmanager above
 
     # Registration
-    app.register_blueprint(auctions_bp, url_prefix='/auctions')
+    #app.register_blueprint(auctions_bp, url_prefix='/auctions')
     #app.register_blueprint(auctionadmin_bp, url_prefix='/auctionadmin')
-    app.register_blueprint(auctions_bp_sqlalchemy, url_prefix='/auctionadmin')
+    app.register_blueprint(auctions_bp_sqlalchemy, url_prefix='/auctions')
     app.register_blueprint(auctions_rest_bp, url_prefix='/api/v1/auctions')
     app.register_blueprint(login_bp, url_prefix='/user')  # Login blueprint handles user login/logout
 

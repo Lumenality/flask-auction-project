@@ -7,7 +7,7 @@
         <div class="container-fluid py-5">
             <h1 class="display-5 fw-bold">Hitta din drömbostad idag!</h1>
             <p class="col-md-8 fs-4">Vi är din lokala mäklarfirma med fokus på Dalarna. Vårt mål är att göra din bostadsaffär så smidig som möjligt.</p>
-            <a href="{{ url_for('auctions_bp.our_auctions') }}" class="btn btn-primary btn-lg" type="button">Se alla auktioner &rarr;</a>
+            <a href="{{ url_for('auctions_bp_sqlalchemy.get_all_auctions') }}" class="btn btn-primary btn-lg" type="button">Se alla auktioner &rarr;</a>
             
         </div>
     </div>

@@ -20,7 +20,7 @@ def get_auction_repo() -> AuctionRepository:
 
 @auctionadmin_bp.route('/', methods=['GET'])
 def get_all_auctions():
-    return redirect(url_for('auctions_bp.our_auctions'))
+    return redirect(url_for('auctions_bp_sqlalchemy.get_all_auctions'))
 
 @auctionadmin_bp.route('/<int:auction_id>', methods=['GET'])
 def get_auction_by_id(auction_id):
