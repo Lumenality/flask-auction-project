@@ -41,7 +41,18 @@ def skapa_app():
         Denna funktion frågar databasen efter en användare med det sparade ID:t.
         Flask-Login behöver denna funktion för att återkoppla sessions till rätt user.
         """
-        return User.query.get(int(user_id))
+        # TEMPORÄR LÖSNING FÖR JSON - BYT UT MOT RIKTIG DATABAS
+                # Load user from JSON file (same as in login_bp.py)
+        import json
+        from .myblueprints.login_bp.login_bp import User
+        with open('app/myblueprints/login_bp/users.json') as f:
+            users_data = json.load(f)
+        for user in users_data:
+            if user['id'] == int(user_id):
+                return User(user['id'], user['username'], user['password'], user['role'])
+        return None
+    
+        #return User.query.get(int(user_id))
 
     return app
 
@@ -60,7 +71,7 @@ def registrera_blueprints(app):
     app.register_blueprint(auctions_bp, url_prefix='/auctions')
     app.register_blueprint(auctionadmin_bp, url_prefix='/auctionadmin')
     app.register_blueprint(auctions_rest_bp, url_prefix='/api/v1/auctions')
-    app.register_blueprint(login_bp, url_prefix='/loginuser')
+    app.register_blueprint(login_bp, url_prefix='/user')  # Login blueprint handles user login/logout
 
 def create_routes(app):
     """

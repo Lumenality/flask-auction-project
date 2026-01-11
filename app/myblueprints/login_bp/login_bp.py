@@ -35,7 +35,7 @@ def load_user(user_id):
 
 login_bp = Blueprint('login_bp', __name__, template_folder='templates')
 
-@login_bp.route('/secret', methods=['GET'])
+@login_bp.route('/', methods=['GET'])
 @login_required #Flask-Login checks whether the user is authenticated. If not Authenticated, they are not logged in, Flask-Login will typically redifect the user to a specified login page or location.
 def secret():
     if current_user.is_authenticated:
@@ -44,11 +44,12 @@ def secret():
         role = current_user.role
         logout_url = url_for('login_bp.logout')
         if role == 'admin':
-            return f"Welcome Admin {username}! This is a secret admin page. <a href='{logout_url}'>Logout</a>"
+            # redirect to index
+            return redirect(url_for('index'))
         if role == 'superuser':
             return f"Welcome Superuser {username}! This is a secret superuser page. <a href='{logout_url}'>Logout</a>"
         if role == 'user':
-            return f"Welcome User {username}! This is a secret user page. <a href='{logout_url}'>Logout</a>"
+            return render_template('user_page.html', username=username, logout_url=logout_url)
         
     else:
         return redirect(url_for('login_bp.login'))
@@ -59,7 +60,7 @@ def secret():
         #return f"Welcome {current_user.username}! This is a secret page."
     '''
 
-@login_bp.route('/mylogin', methods=['GET', 'POST'])
+@login_bp.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
@@ -81,7 +82,7 @@ def login():
     loginmessage = "Not logged in, to be able to add, delete or comment you myust be logged in with the right credentials"
     return render_template('login.html', form=form, loginmessage=loginmessage)
 
-@login_bp.route('/mylogout')
+@login_bp.route('/logout')
 @login_required
 def logout():
     logout_user()

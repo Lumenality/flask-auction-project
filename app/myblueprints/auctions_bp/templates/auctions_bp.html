@@ -19,16 +19,18 @@ All Auctions
     <li class="breadcrumb-item active" aria-current="page">Auctions</li>
   </ol>
 </nav>
-  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-    {% for auction in auctions %}
-    <div class="col">
-        {% include 'auction_card_bp.html' %}
-    </div>
-    {% endfor %}
+{% if current_user.is_authenticated and current_user.role == 'admin' %}
+<a href="{{ url_for('auctionadmin_bp.add_auction_form') }}">
+<button type="button" class="btn btn-primary mb-3" >Add new auction</button>
+</a>
+{% endif %}
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+  {% for auction in auctions %}
+  <div class="col">
+      {% include 'auction_card_bp.html' %}
   </div>
-  <a href="{{ url_for('auctionadmin_bp.add_auction_form') }}">
-  <button type="button" class="btn btn-primary" >Add new auction</button>
-  </a>
+  {% endfor %}
+</div>
 </div>
 
 {% endblock %}
