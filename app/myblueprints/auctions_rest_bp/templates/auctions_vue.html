@@ -15,50 +15,11 @@
 <body>
 <div class="container mt-3">
 <div id="app">
-  <h1>Auktions Vue App</h1>
-  <table>
-    <tr v-for="(auction,index) in auctions" :key="auction.id">
-      <td>[[ auction.id ]] - [[ auction.description ]] - [[ auction.starting_bid ]] - [[ auction.auction_duration ]]</td>
-      <td><img :src="auction.image_url" alt="Auction Image" width="100"></td>
-      <td><button @click="editAuction(index)">Edit</button></td>
-      <td><button @click="deleteAuction(index)">Delete</button></td>
-    </tr>
-  </table>
-  <button @click="restorejson" class="btn btn-primary">Restore json</button>
-
-  <h2>Add Person</h2>
-  <form @submit.prevent="addAuction">
-    <label for="id">ID:</label>
-    <input type="number" v-model="newAuction.id" required><br>
-
-    <label for="description">Description:</label>
-    <input type="text" v-model="newAuction.description" required><br>
-
-    <label for="starting_bid">Starting Bid:</label>
-    <input type="number" v-model="newAuction.starting_bid" required><br>
-
-    <label for="auction_duration">Auction Duration (days):</label>
-    <input type="number" v-model="newAuction.auction_duration" required><br>
-
-    <label for="image_url">Image URL:</label>
-    <input type="text" v-model="newAuction.image_url" required><br>
-
-    <button type="submit">Add Auction</button>
-  </form>
-  <hr>
-
-  <!-- Edit auction -->
-  <form v-if="showEditForm === true" @submit.prevent="updateAuction">
-    <input type="text" v-model="editedAuction.description" required>
-    <input type="number" v-model="editedAuction.starting_bid" required>
-
-    <button type="submit">Update Auction</button>
-  </form>
-
+  <auction-list></auction-list>
 </div><!-- End div vue app -->
 </div><!-- end container -->
 <script>
-  const app =Vue.createApp({
+  const AuctionListCrudComponent = {
     delimiters: ['[[',']]'], // Use other delimiters than default to avoid collision with Jinja2
     data() {
       return {
@@ -81,12 +42,10 @@
         showEditForm: false
       };
     },
-
     mounted() {
       // Call method like get_rest_data() to get initial data from rest api
       this.fetchAuctions();
     },
-
     methods: {
       fetchAuctions() {
         axios.get('/api/v1/auctions')
@@ -165,8 +124,53 @@
       }//end get_rest_data
 
     },
-  });//end Vue.createApp
+    template: `
+    <h1>Auktions Vue App</h1>
+    <table>
+      <tr v-for="(auction,index) in auctions" :key="auction.id">
+        <td>[[ auction.id ]] - [[ auction.description ]] - [[ auction.starting_bid ]] - [[ auction.auction_duration ]]</td>
+        <td><img :src="auction.image_url" alt="Auction Image" width="100"></td>
+        <td><button @click="editAuction(index)">Edit</button></td>
+        <td><button @click="deleteAuction(index)">Delete</button></td>
+      </tr>
+    </table>
+    <button @click="restorejson" class="btn btn-primary">Restore json</button>
 
+    <h2>Add Person</h2>
+    <form @submit.prevent="addAuction">
+      <label for="id">ID:</label>
+      <input type="number" v-model="newAuction.id" required><br>
+
+      <label for="description">Description:</label>
+      <input type="text" v-model="newAuction.description" required><br>
+
+      <label for="starting_bid">Starting Bid:</label>
+      <input type="number" v-model="newAuction.starting_bid" required><br>
+
+      <label for="auction_duration">Auction Duration (days):</label>
+      <input type="number" v-model="newAuction.auction_duration" required><br>
+
+      <label for="image_url">Image URL:</label>
+      <input type="text" v-model="newAuction.image_url" required><br>
+
+      <button type="submit">Add Auction</button>
+    </form>
+    <hr>
+
+    <!-- Edit auction -->
+    <form v-if="showEditForm === true" @submit.prevent="updateAuction">
+      <input type="text" v-model="editedAuction.description" required>
+      <input type="number" v-model="editedAuction.starting_bid" required>
+
+      <button type="submit">Update Auction</button>
+    </form>
+
+    `,
+  };//end of AuctionListCrudComponent
+  const app = Vue.createApp({});
+
+  // Register the AuctionListCrudComponent and mount the app in the div with id 'app'
+  app.component('auction-list', AuctionListCrudComponent); // Use <auction-list></auction-list> to include this component
   app.mount('#app'); // Mount the Vue app to the div with id 'app'
 </script>
 </body>
