@@ -127,12 +127,16 @@ def update_auction(auction_id):
             content_type = request.headers.get('Content-Type')
             if (content_type == 'application/json'):
                 auction["description"]=request.json["description"]
-
+                auction["starting_bid"]=request.json["starting_bid"]
+                auction["auction_duration"]=request.json["auction_duration"]
+                auction["image_url"]=request.json["image_url"]
             #om det postas som formulär
             if (request.form):
                 # läser in det från formuläret skickade namn datat, byter ut det för den funna personen
                 auction["description"]=request.form.get("description")
-
+                auction["starting_bid"]=request.form.get("starting_bid")
+                auction["auction_duration"]=request.form.get("auction_duration")
+                auction["image_url"]=request.form.get("image_url")
             auction_updated = auction
             break
 
