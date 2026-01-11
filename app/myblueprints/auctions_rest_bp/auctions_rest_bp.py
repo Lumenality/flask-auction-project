@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, render_template, request
 import json
 import os
 
-auctions_rest_bp = Blueprint('auctions_rest_bp', __name__,template_folder='templates')# use this variable in flask_app.py, look how import and register this blueprint
+auctions_rest_bp = Blueprint('auctions_rest_bp', __name__,template_folder='templates', static_folder='static')# use this variable in flask_app.py, look how import and register this blueprint
 #templates is in the main template folder
 
 # Get the directory of the current script
