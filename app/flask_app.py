@@ -63,13 +63,15 @@ def registrera_blueprints(app):
     """
     # Imports
     from .myblueprints.auctions_bp.auctions_bp import auctions_bp
-    from .myblueprints.auctionadmin_bp.auctionadmin_bp import auctionadmin_bp
+    #from .myblueprints.auctionadmin_bp.auctionadmin_bp import auctionadmin_bp
+    from .myblueprints.auctionadmin_sqlalchemy_bp.auctions_bp_sqlalchemy import auctions_bp_sqlalchemy
     from .myblueprints.auctions_rest_bp.auctions_rest_bp import auctions_rest_bp
     from .myblueprints.login_bp.login_bp import login_bp, login_manager # also see how this app is registered with the loginmanager above
 
     # Registration
     app.register_blueprint(auctions_bp, url_prefix='/auctions')
-    app.register_blueprint(auctionadmin_bp, url_prefix='/auctionadmin')
+    #app.register_blueprint(auctionadmin_bp, url_prefix='/auctionadmin')
+    app.register_blueprint(auctions_bp_sqlalchemy, url_prefix='/auctionadmin')
     app.register_blueprint(auctions_rest_bp, url_prefix='/api/v1/auctions')
     app.register_blueprint(login_bp, url_prefix='/user')  # Login blueprint handles user login/logout
 

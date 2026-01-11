@@ -1,7 +1,6 @@
 from flask import Blueprint, flash, render_template, jsonify, request, redirect, url_for, flash, make_response, current_app, g
 import os
 
-#from myblueprints.cars.car_reposityry import CarRepository
 from .auction_repo_sqlite_db import AuctionRepository
 from .auction import Auction
 
@@ -50,7 +49,7 @@ def update_auction():
     auction = Auction(request.form.get('id'),
                       request.form.get('description'),
                       request.form.get('starting_bid'),
-                      request.form.get('auction_duration'),
+                      request.form.get('duration'),
                       request.form.get('image_url') or None)
     auction_repo.update(auction)
     if auction:
@@ -91,7 +90,7 @@ def add_auction():
     auction = Auction(request.form.get('id'),
                       request.form.get('description'),
                       request.form.get('starting_bid'),
-                      request.form.get('auction_duration'),
+                      request.form.get('duration'),
                       request.form.get('image_url') or None)
     auction_repo.add(auction)
     return redirect(url_for('auctionadmin_bp.get_all_auctions'))

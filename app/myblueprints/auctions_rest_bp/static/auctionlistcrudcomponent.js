@@ -8,7 +8,7 @@
           id: '',
           description: '',
           starting_bid: '',
-          auction_duration: '',
+          duration: '',
           image_url: ''
         },
         indexEditingAuction: null,
@@ -16,7 +16,7 @@
           id: '',
           description: '',
           starting_bid: '',
-          auction_duration: '',
+          duration: '',
           image_url: ''},
         showEditForm: false
       };
@@ -44,7 +44,7 @@
               id: '',
               description: '',
               starting_bid: '',
-              auction_duration: '',
+              duration: '',
               image_url: ''
             };
           })
@@ -107,7 +107,7 @@
     <h1>Auktions Vue App</h1>
     <table>
       <tr v-for="(auction,index) in auctions" :key="auction.id">
-        <td>[[ auction.id ]] - [[ auction.description ]] - [[ auction.starting_bid ]] - [[ auction.auction_duration ]]</td>
+        <td>[[ auction.id ]] - [[ auction.description ]] - [[ auction.starting_bid ]] - [[ auction.duration ]]</td>
         <td><img :src="auction.image_url" alt="Auction Image" width="100"></td>
         <td><button @click="editAuction(index)">Edit</button></td>
         <td><button @click="deleteAuction(index)">Delete</button></td>
@@ -126,8 +126,8 @@
       <label for="starting_bid">Starting Bid:</label>
       <input type="number" v-model="newAuction.starting_bid" required><br>
 
-      <label for="auction_duration">Auction Duration (days):</label>
-      <input type="number" v-model="newAuction.auction_duration" required><br>
+      <label for="duration">Auction Duration (days):</label>
+      <input type="number" v-model="newAuction.duration" required><br>
 
       <label for="image_url">Image URL:</label>
       <input type="text" v-model="newAuction.image_url" required><br>

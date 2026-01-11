@@ -36,8 +36,8 @@ class Auction(db.Model):
     # starting_bid: int (max 9 siffror), MÅSTE fyllas i
     starting_bid = db.Column(db.Integer, nullable=False)
     
-    # auction_duration: Sparas som int motsvarande antal dagar, MÅSTE fyllas i
-    auction_duration = db.Column(db.Integer, nullable=False)
+    # duration: Sparas som int motsvarande antal dagar, MÅSTE fyllas i
+    duration = db.Column(db.Integer, nullable=False)
     
     # image_url: Sträng (max 1000 tecken), KAN vara NULL (frivillig)
     image_url = db.Column(db.String(1000), nullable=True)
@@ -51,7 +51,7 @@ class Auction(db.Model):
         Denna metod definierar hur objektet visas när vi printar det (används för debugging).
         Ger en läsbar representation av objektet.
         """
-        return f'<Auction for {self.description}, {self.starting_bid}, {self.auction_duration} days>'
+        return f'<Auction for {self.description}, {self.starting_bid}, {self.duration} days>'
 
 
 # ============================================================
@@ -63,14 +63,14 @@ STARTDATA_AUCTIONS = [
         'id': 1,
         'description': 'Skriet',
         'starting_bid': 5,
-        'auction_duration': 7,
+        'duration': 7,
         'image_url': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/The_Scream.jpg/256px-The_Scream.jpg?20160501101333'
     },
     {
         'id': 2,
         'description': 'Mona Lisa',
         'starting_bid': 10,
-        'auction_duration': 7,
+        'duration': 7,
         'image_url': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Mona_Lisa.jpg/256px-Mona_Lisa.jpg?20100608143407'
     }
 ]
@@ -93,7 +93,7 @@ def create_start_auctions():
             new_auction = Auction(
                 description=data['description'],
                 starting_bid=data['starting_bid'],
-                auction_duration=data['auction_duration'],
+                duration=data['duration'],
                 image_url=data.get('image_url')
             )
             db.session.add(new_auction) # Lägger till objektet i transaktionen

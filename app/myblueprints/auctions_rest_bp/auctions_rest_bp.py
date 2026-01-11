@@ -72,7 +72,7 @@ def add_auction():
         'id': data['id'],
         'description': data['description'],
         'starting_bid': data['starting_bid'],
-        'auction_duration': data['auction_duration'],
+        'duration': data['duration'],
         'image_url': data['image_url']
     }
     #appenda dict till listan
@@ -128,14 +128,14 @@ def update_auction(auction_id):
             if (content_type == 'application/json'):
                 auction["description"]=request.json["description"]
                 auction["starting_bid"]=request.json["starting_bid"]
-                auction["auction_duration"]=request.json["auction_duration"]
+                auction["duration"]=request.json["duration"]
                 auction["image_url"]=request.json["image_url"]
             #om det postas som formulär
             if (request.form):
                 # läser in det från formuläret skickade namn datat, byter ut det för den funna personen
                 auction["description"]=request.form.get("description")
                 auction["starting_bid"]=request.form.get("starting_bid")
-                auction["auction_duration"]=request.form.get("auction_duration")
+                auction["duration"]=request.form.get("duration")
                 auction["image_url"]=request.form.get("image_url")
             auction_updated = auction
             break
@@ -157,14 +157,14 @@ def reset_auctions_json():
             "id": 1,
             "description": "Skriet",
             "starting_bid": 5,
-            "auction_duration": 7,
+            "duration": 7,
             "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/The_Scream.jpg/256px-The_Scream.jpg?20160501101333"
         },
         {
             "id": 2,
             "description": "Mona Lisa",
             "starting_bid": 10,
-            "auction_duration": 7,
+            "duration": 7,
             "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Mona_Lisa.jpg/256px-Mona_Lisa.jpg?20100608143407"
         }
     ]

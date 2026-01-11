@@ -29,9 +29,9 @@ class AuctionRepository:
         cursor = conn.cursor()
 
         cursor.execute('''
-            INSERT INTO auctions (id, description, starting_bid, auction_duration, image_url)
+            INSERT INTO auctions (id, description, starting_bid, duration, image_url)
             VALUES (?, ?, ?, ?, ?)
-            ''', (auction.id, auction.description, auction.starting_bid, auction.auction_duration, auction.image_url))
+            ''', (auction.id, auction.description, auction.starting_bid, auction.duration, auction.image_url))
         
         conn.commit()
         conn.close()
@@ -54,7 +54,7 @@ class AuctionRepository:
             UPDATE auctions
             SET description = ?, starting_bid = ?, starting_duration = ?, image_url = ?
             WHERE id = ?
-            ''', (auction.description, auction.starting_bid, auction.auction_duration, auction.image_url, auction.id))
+            ''', (auction.description, auction.starting_bid, auction.duration, auction.image_url, auction.id))
         
         conn.commit()
         conn.close()
@@ -84,7 +84,7 @@ class AuctionRepository:
                 id INTEGER PRIMARY KEY,
                 description TEXT NOT NULL,
                 starting_bid REAL NOT NULL,
-                auction_duration INTEGER NOT NULL,
+                duration INTEGER NOT NULL,
                 image_url TEXT
             )
         ''')
@@ -99,10 +99,10 @@ class AuctionRepository:
         for auction in sample_auctions:
             cursor.execute(
                 '''
-                INSERT INTO auctions (id, description, starting_bid, auction_duration, image_url)
+                INSERT INTO auctions (id, description, starting_bid, duration, image_url)
                 VALUES (?, ?, ?, ?, ?)
                 ''',
-                (auction.id, auction.description, auction.starting_bid, auction.auction_duration, auction.image_url)
+                (auction.id, auction.description, auction.starting_bid, auction.duration, auction.image_url)
             )
 
         conn.commit()

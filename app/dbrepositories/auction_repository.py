@@ -86,7 +86,7 @@ class AuctionRepository:
         new_auction = Auction(
             description=data['description'],
             starting_bid=data['starting_bid'],
-            auction_duration=data['auction_duration'],
+            duration=data['duration'],
             image_url=data.get('image_url')
             # Använder .get() med standardvärde för att hantera frivilliga fält (för att undvika KeyError)
 
@@ -119,7 +119,7 @@ class AuctionRepository:
             # Objektet hittades: Uppdatera fälten på Python-objektet.
             auction.description = data['description']
             auction.starting_bid = data['starting_bid']
-            auction.auction_duration = data['auction_duration']
+            auction.duration = data['duration']
             auction.image_url = data.get('image_url', auction.image_url)
             # Använder .get() för att hantera frivilliga fält (behåller gamla värdet om inget nytt anges)
 
