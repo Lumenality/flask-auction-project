@@ -43,3 +43,46 @@ def getauction_byid(auction_id):
 
     # Om auktionen inte hittas, returnera ett felmeddelande
     return jsonify({'error': 'Auktion inte hittad'}), 404 # HTTP-statuskod 404 (Not Found)
+
+#------------- add auction to json file --------------
+@auctions_rest_bp.route('/', methods=['POST'])#https://localhost:5000/api/v1/auctions/
+def add_auction():
+    # Läs in från JSON-filen till en lista
+    fileObject = open(AUCTIONS_FILE, "r")
+    auctions = json.load(fileObject)
+    print(auctions)
+    fileObject.close()
+
+    # läser in om det kommer från HTML formulär
+    if(request.form):
+        data = request.form
+
+    # läs in om det kommer som json
+    content_type = request.headers.get('Content-Type')
+    if(content_type == 'application/json'):
+        data = request.json
+
+    # check if id already exists
+    for auction in auctions:
+        if auction['id'] == data['id']:
+            return jsonify({'error': 'Auktion med detta ID finns redan'}), 400 # HTTP status code 400 means bad request
+        
+    # skapa en dict med person data
+    new_auction = {
+        'id': data['id'],
+        'description': data['description'],
+        'starting_bid': data['starting_bid'],
+        'auction_duration': data['auction_duration'],
+        'image_url': data['image_url']
+    }
+    #appenda dict till listan
+    auctions.append(new_auction)
+    print(auctions)
+    # gör om listan till json sträng, med indentering 2
+    jsonString = json.dumps(auctions, indent=2)
+    jsonFile = open(AUCTIONS_FILE, "w")
+    # skriv json strängen till fil
+    jsonFile.write(jsonString)
+    jsonFile.close()
+    # skapar en dict som skickas tillbaka som json sträng
+    return jsonify(new_auction), 201 # HTTP status code 201 means created
