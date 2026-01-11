@@ -86,3 +86,26 @@ def add_auction():
     jsonFile.close()
     # skapar en dict som skickas tillbaka som json sträng
     return jsonify(new_auction), 201 # HTTP status code 201 means created
+
+@auctions_rest_bp.route('/<int:auction_id>', methods=['DELETE'])#https://localhost:5000/api/v1/auctions/1
+def delete_auction(auction_id):
+    #läs in från JSON-filen till en lista
+    fileObject = open(AUCTIONS_FILE, "r")
+    jsonContent = fileObject.read()
+    fileObject.close()
+    auctions = json.loads(jsonContent)
+    # loopa auctions listan och ta bort den med rätt id
+    index=0
+    deleted_auction = {}
+    for auction in auctions:
+        if auction['id'] == auction_id:
+            deleted_auction = auction
+            del auctions[index]
+            break
+        index += 1
+    # skriv tillbaka till filen
+    jsonString = json.dumps(auctions, indent=2)
+    jsonFile = open(AUCTIONS_FILE, "w")
+    jsonFile.write(jsonString)
+    jsonFile.close()
+    return jsonify(deleted_auction), 200 # HTTP status code 200 means OK

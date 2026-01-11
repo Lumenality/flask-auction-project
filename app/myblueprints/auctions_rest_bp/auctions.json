@@ -12,19 +12,5 @@
     "starting_bid": 10,
     "auction_duration": 7,
     "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Mona_Lisa.jpg/256px-Mona_Lisa.jpg?20100608143407"
-  },
-  {
-    "id": 7,
-    "description": "Testing POST",
-    "starting_bid": 90000.0,
-    "auction_duration": 15,
-    "image_url": "https://www.example.com/image/"
-  },
-  {
-    "id": 8,
-    "description": "Testing POST",
-    "starting_bid": 90000,
-    "auction_duration": 15,
-    "image_url": "https://www.example.com/image/"
   }
 ]
