@@ -32,6 +32,20 @@ auction.description }} {% endblock %} {%block content %}
     <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">
       {{ auction.description }}
     </h1>
+    <div class="d-flex flex-row mb-3">
+      <a  type="button"
+          href="{{ url_for('auctions_bp_sqlalchemy.like_auction', auction_id=auction.id) }}"
+          class="thumb-counter d-flex flex-row align-items-center me-3 gap-1 text-success"> 
+        <p class="my-auto">+0</p>
+        <i class="bi like-hands bi-hand-thumbs-up"></i>
+      </a>
+      <a  type="button"
+          href="{{ url_for('auctions_bp_sqlalchemy.dislike_auction', auction_id=auction.id) }}"
+          class="thumb-counter d-flex flex-row align-items-center me-3 gap-1 text-danger">
+        <p class="my-auto">-0</p>
+        <i class="bi like-hands bi-hand-thumbs-down"></i>
+      </a>
+    </div>
     <p class="lead">
       Starting Bid: ${{ auction.starting_bid }}
       <br />Duration: {{ auction.duration }} days.

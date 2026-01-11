@@ -73,7 +73,9 @@ def add_auction():
         'description': data['description'],
         'starting_bid': data['starting_bid'],
         'duration': data['duration'],
-        'image_url': data['image_url']
+        'image_url': data['image_url'],
+        'likes': data.get('likes', 0),
+        'dislikes': data.get('dislikes', 0)
     }
     #appenda dict till listan
     auctions.append(new_auction)
@@ -158,14 +160,18 @@ def reset_auctions_json():
             "description": "Skriet",
             "starting_bid": 5,
             "duration": 7,
-            "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/The_Scream.jpg/256px-The_Scream.jpg?20160501101333"
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/The_Scream.jpg/256px-The_Scream.jpg?20160501101333",
+            "likes": 1,
+            "dislikes": 1
         },
         {
             "id": 2,
             "description": "Mona Lisa",
             "starting_bid": 10,
             "duration": 7,
-            "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Mona_Lisa.jpg/256px-Mona_Lisa.jpg?20100608143407"
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Mona_Lisa.jpg/256px-Mona_Lisa.jpg?20100608143407",
+            "likes": 1,
+            "dislikes": 1
         }
     ]
     jsonString = json.dumps(original_auctions, indent=2)

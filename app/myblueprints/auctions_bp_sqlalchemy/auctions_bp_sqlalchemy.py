@@ -5,6 +5,7 @@ from .auction_repository import AuctionRepository
 auctions_bp_sqlalchemy = Blueprint('auctions_bp_sqlalchemy', __name__,template_folder='templates')
 auctions_repo = AuctionRepository()
 
+# ---------------------- Auction Routes ------------------ #
 @auctions_bp_sqlalchemy.route('/', methods=['GET'])
 def get_all_auctions():
     auctions_list = auctions_repo.get_all()
@@ -81,3 +82,28 @@ def auction_details(auction_id):
         return render_template('auctionviews/auction_details_bp.html', auction=found_auction)
     else:
         return 'Auction not found', 404
+    
+# ---------------------- End of Auction Routes ------------------ #
+
+# --------------------------- Like routes ----------------------- #
+@auctions_bp_sqlalchemy.route('/like/<int:auction_id>', methods=['GET'])
+def like_auction(auction_id):
+    # Placeholder function to handle liking an auction
+    if current_user.is_authenticated:
+        #flash(f"Auction {auction_id} liked.")
+        return redirect(url_for('auctions_bp_sqlalchemy.get_auction_by_id', auction_id=auction_id))
+    else:
+        #flash("You must be logged in to dislike an auction.", "error")
+        return redirect(url_for('login_bp.login'))
+
+@auctions_bp_sqlalchemy.route('/dislike/<int:auction_id>', methods=['GET'])
+def dislike_auction(auction_id):
+    # Placeholder function to handle disliking an auction
+    if current_user.is_authenticated:
+        #flash(f"Auction {auction_id} disliked.")
+        return redirect(url_for('auctions_bp_sqlalchemy.get_auction_by_id', auction_id=auction_id))
+    else:
+        #flash("You must be logged in to dislike an auction.", "error")
+        return redirect(url_for('login_bp.login'))
+    
+# ------------------------- End of Functions --------------------- #

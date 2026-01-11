@@ -1,7 +1,7 @@
 from flask import Flask, render_template
-from .database import init_db    # För att koppla ihop appen med databasen
-from flask_login import LoginManager   # Enkelt sätt att hantera inloggning
-from .models.user import User           # Modellen för användare (behövs av Flask-Login)
+# from .database import init_db   # <- remove if not using Flask-SQLAlchemy
+from flask_login import LoginManager
+# from .models.user import User   # <- remove if not using models
 
 def skapa_app():
     """
@@ -17,11 +17,6 @@ def skapa_app():
 
     # SÄTT UPP APPENS INSTÄLLNINGAR
     app.config['SECRET_KEY'] = '86cff1dfb45dcaec470c4b3dfcfe6ee6'   # Behöv för att sessions/inloggning ska vara säkert
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///auctionsite.db'  # Pekar ut vilken databas som ska användas
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False   # Spara minne och processorkraft
-
-    # KOPPLA APPEN TILL DATABASEN & SKAPA TABELLER
-    init_db(app)
 
     # REGISTRERA MODULES (BLUEPRINTS)
     # Varje blueprint är en del av appen, t.ex. "bostäder" eller "admin".
@@ -62,15 +57,11 @@ def registrera_blueprints(app):
     så att rutterna och funktionerna de innehåller blir tillgängliga.
     """
     # Imports
-    from .myblueprints.auctions_bp.auctions_bp import auctions_bp
-    #from .myblueprints.auctionadmin_bp.auctionadmin_bp import auctionadmin_bp
     from .myblueprints.auctions_bp_sqlalchemy.auctions_bp_sqlalchemy import auctions_bp_sqlalchemy
     from .myblueprints.auctions_rest_bp.auctions_rest_bp import auctions_rest_bp
     from .myblueprints.login_bp.login_bp import login_bp, login_manager # also see how this app is registered with the loginmanager above
 
     # Registration
-    #app.register_blueprint(auctions_bp, url_prefix='/auctions')
-    #app.register_blueprint(auctionadmin_bp, url_prefix='/auctionadmin')
     app.register_blueprint(auctions_bp_sqlalchemy, url_prefix='/auctions')
     app.register_blueprint(auctions_rest_bp, url_prefix='/api/v1/auctions')
     app.register_blueprint(login_bp, url_prefix='/user')  # Login blueprint handles user login/logout

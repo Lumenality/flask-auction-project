@@ -15,6 +15,8 @@ class Auction(Base):
     starting_bid = Column(Integer, nullable=False)
     duration = Column(Integer, nullable=False)
     image_url = Column(String(128), nullable=True)
+    likes = Column(Integer, default=0)
+    dislikes = Column(Integer, default=0)
 
 # Define a class to handle database operations for the Auction model 
 class AuctionRepository:
@@ -33,10 +35,11 @@ class AuctionRepository:
 
         # If the database is empty, populate it with sample data
         if not self.get_all():
-            self.add(1, "Skriet", 5, "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/The_Scream.jpg/256px-The_Scream.jpg?20160501101333")
-            self.add(2, "Mona Lisa", 10, "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Mona_Lisa.jpg/256px-Mona_Lisa.jpg?20100608143407")
+            # id, description, starting_bid, duration, image_url, likes, dislikes
+            self.add(1, "Skriet", 10000, 5, "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/The_Scream.jpg/256px-The_Scream.jpg?20160501101333",0,0)
+            self.add(2, "Mona Lisa", 10000, 7,"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Mona_Lisa.jpg/256px-Mona_Lisa.jpg?20100608143407",0,0)
 
-    def add(self, id: int, description: str, starting_bid: int, duration:int, image_url: Optional[str] = None) -> None:
+    def add(self, id: int, description: str, starting_bid: int, duration:int, image_url: Optional[str] = None, likes=0, dislikes=0) -> None:
         # Add a new auction to the database
         session = self.Session()
         auction = Auction(
@@ -44,7 +47,10 @@ class AuctionRepository:
             description=description,
             starting_bid=starting_bid,
             duration=duration,
-            image_url=image_url)
+            image_url=image_url,
+            likes=likes,
+            dislikes=dislikes
+        )
         session.add(auction)
         session.commit()
         return auction
@@ -83,3 +89,14 @@ class AuctionRepository:
         with self.Session() as session:
             # Retrieve all auctions from the database
             return session.query(Auction).all()
+        
+    def increment_likes_for_auction(self, auction_id):
+        with self.Session() as session:
+            # Find the auction to increment likes
+            auction = session.query(Auction).filter_by(id=auction_id).first()
+            if auction:
+                auction.likes += 1
+                session.commit()
+                return auction.likes
+            else:
+                return None

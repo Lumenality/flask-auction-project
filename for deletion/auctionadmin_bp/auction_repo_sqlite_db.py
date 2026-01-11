@@ -91,8 +91,8 @@ class AuctionRepository:
         
         # Sample start data
         sample_auctions = [
-            Auction(1, "Skriet", 5, "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/The_Scream.jpg/256px-The_Scream.jpg?20160501101333"),
-            Auction(2, "Mona Lisa", 10, "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Mona_Lisa.jpg/256px-Mona_Lisa.jpg?20100608143407"),
+            Auction(1, "Skriet", 5, "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/The_Scream.jpg/256px-The_Scream.jpg?20160501101333",2),
+            Auction(2, "Mona Lisa", 10, "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Mona_Lisa.jpg/256px-Mona_Lisa.jpg?20100608143407",2),
             # Add more auctions here if needed
         ]
 
