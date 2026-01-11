@@ -20,8 +20,9 @@ All Auctions
   </ol>
 </nav>
 {% if current_user.is_authenticated and current_user.role == 'admin' %}
-<a href="{{ url_for('auctionadmin_bp.add_auction_form') }}">
-<button type="button" class="btn btn-primary mb-3" >Add new auction</button>
+<a type="button" class="btn btn-primary mb-3" 
+  href="{{ url_for('auctions_bp_sqlalchemy.add_auction_form') }}">
+Add new auction
 </a>
 {% endif %}
 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">

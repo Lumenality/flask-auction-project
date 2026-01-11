@@ -10,7 +10,11 @@ class User(UserMixin):
         self.username = username
         self.password = password
         self.role = role
-
+        
+    @property
+    def is_admin(self):
+        return self.role == 'admin'
+    
 #create the class for the form
 class LoginForm(FlaskForm):
     username = StringField('Användarnamn')

@@ -52,8 +52,9 @@
                 </a>
                 </li>
                 <li class="nav-item">
-                <a href="{{ url_for('login_bp.logout') }}">
-                  <button class="btn btn-danger btn-sm my-auto">Logout</button>
+                <a type="button"class="btn btn-danger btn-sm my-auto"
+                  href="{{ url_for('login_bp.logout') }}">
+                  Logout
                 </a>
                 </li>
                 {% else %}

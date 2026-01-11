@@ -23,7 +23,7 @@
         </a>
         {% if current_user.is_authenticated and current_user.role == 'admin' %}
         <a type="button"
-        href="{{ url_for('auctionadmin_bp.delete_auction', auction_id=auction.id) }}"
+        href="{{ url_for('auctions_bp_sqlalchemy.delete_auction', auction_id=auction.id) }}"
         class="btn btn-danger">
         Delete
         </a>

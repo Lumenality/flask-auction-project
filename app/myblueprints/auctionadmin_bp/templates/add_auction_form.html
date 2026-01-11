@@ -3,7 +3,7 @@
 {% block title %} Add Auction {% endblock %}
 
 {% block content %}
-<form action="{{ url_for('auctionadmin_bp.add_auction') }}" method="post">
+<form action="{{ url_for('auctions_bp_sqlalchemy.add_auction') }}" method="post">
     <label for="id">ID:</label>
     <input type="text" id="id" name="id" required><br>
 
