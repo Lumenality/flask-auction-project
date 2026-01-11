@@ -9,7 +9,6 @@ auctions_repo = AuctionRepository()
 @auctions_bp_sqlalchemy.route('/', methods=['GET'])
 def get_all_auctions():
     auctions_list = auctions_repo.get_all()
-    #return auctions, need to add the subfoldersname, carviews
     return render_template('auctions_bp.html', auctions=auctions_list)
 
 @auctions_bp_sqlalchemy.route('/<int:auction_id>', methods=['GET'])
@@ -71,18 +70,6 @@ def delete_auction(auction_id):
         return redirect(url_for('auctions_bp_sqlalchemy.get_all_auctions'))
     else:
         return jsonify({"message": "You are not authorized to delete auctions."}), 403
-
-""" @auctions_bp_sqlalchemy.route('/<int:auction_id>')
-def auction_details(auction_id):
-    found_auction = None
-    for auction in auctions_repo.get_all():
-        if auction.id == auction_id:
-            found_auction = auction
-            break
-    if found_auction:
-        return render_template('auction_details_bp.html', auction=found_auction)
-    else:
-        return 'Auction not found', 404 """
     
 # ---------------------- End of Auction Routes ------------------ #
 
@@ -109,7 +96,7 @@ def dislike_auction(auction_id):
     
 # ------------------------- End of Functions --------------------- #
 
-# ---------------------- Auction Routes ------------------ #
+# -------------------------- Auction Routes ---------------------- #
 @auctions_bp_sqlalchemy.route('/<int:auction_id>/bids/add', methods=['GET'])
 def add_bid_form(auction_id):
     auction = auctions_repo.find_by_id(auction_id)
@@ -145,3 +132,4 @@ def add_bid(auction_id):
 
     flash(f'You placed a bid of {request.form.get("amount")} on auction with id: {auction_id}.', 'success')
     return redirect(url_for('auctions_bp_sqlalchemy.get_auction_by_id', auction_id=auction_id))
+# ------------------------ End of Bid Routes --------------------- #

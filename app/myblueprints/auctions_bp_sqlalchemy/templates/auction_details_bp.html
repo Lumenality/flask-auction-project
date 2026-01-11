@@ -3,19 +3,32 @@ auction.description }} {% endblock %} {%block content %}
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb breadcrumb-chevron p-3 bg-body-tertiary rounded-3">
     <li class="breadcrumb-item">
-        <a class="link-body-emphasis" href="{{ url_for('index') }}">
-        <svg xmlns="http://www.w3.org/2000/svg" class="bi" width="16" height="16" aria-hidden="true" fill="black">
-            <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5"/>
+      <a class="link-body-emphasis" href="{{ url_for('index') }}">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="bi"
+          width="16"
+          height="16"
+          aria-hidden="true"
+          fill="black"
+        >
+          <path
+            d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5"
+          />
         </svg>
         <span class="visually-hidden">Home</span>
       </a>
     </li>
     <li class="breadcrumb-item">
-      <a class="link-body-emphasis fw-semibold text-decoration-none" href="{{ url_for('auctions_bp_sqlalchemy.get_all_auctions') }}"
+      <a
+        class="link-body-emphasis fw-semibold text-decoration-none"
+        href="{{ url_for('auctions_bp_sqlalchemy.get_all_auctions') }}"
         >Auctions</a
       >
     </li>
-    <li class="breadcrumb-item active" aria-current="page">{{ auction.description | truncate(20, True, '...')}}</li>
+    <li class="breadcrumb-item active" aria-current="page">
+      {{ auction.description | truncate(20, True, '...')}}
+    </li>
   </ol>
 </nav>
 <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
@@ -24,7 +37,7 @@ auction.description }} {% endblock %} {%block content %}
       src="{{ auction.image_url }}"
       class="d-block mx-lg-auto img-fluid"
       alt="{{ auction.description }}"
-      style="max-height: 500px;"
+      style="max-height: 500px"
       loading="lazy"
     />
   </div>
@@ -33,48 +46,76 @@ auction.description }} {% endblock %} {%block content %}
       {{ auction.description }}
     </h1>
     <div class="d-flex flex-row mb-3">
+      <form
+        method="post"
+        action="{{ url_for('auctions_bp_sqlalchemy.like_auction', auction_id=auction.id) }}"
+      >
+        <button
+          type="submit"
+          class="thumb-counter d-flex flex-row align-items-center me-3 p-2 gap-1 text-success border-0 bg-transparent"
+        >
+          <p class="my-auto">{{ auction.likes }}</p>
+          <i class="bi like-hands bi-hand-thumbs-up"></i>
+        </button>
+      </form>
 
-  <form method="post" action="{{ url_for('auctions_bp_sqlalchemy.like_auction', auction_id=auction.id) }}">
-    <button type="submit"
-            class="thumb-counter d-flex flex-row align-items-center me-3 p-2 gap-1 text-success border-0 bg-transparent">
-      <p class="my-auto">{{ auction.likes }}</p>
-      <i class="bi like-hands bi-hand-thumbs-up"></i>
-    </button>
-  </form>
-
-  <form method="post" action="{{ url_for('auctions_bp_sqlalchemy.dislike_auction', auction_id=auction.id) }}">
-    <button type="submit"
-            class="thumb-counter d-flex flex-row align-items-center me-3 p-2 gap-1 text-danger border-0 bg-transparent">
-      <p class="my-auto">{{ auction.dislikes }}</p>
-      <i class="bi like-hands bi-hand-thumbs-down"></i>
-    </button>
-  </form>
-
-</div>
+      <form
+        method="post"
+        action="{{ url_for('auctions_bp_sqlalchemy.dislike_auction', auction_id=auction.id) }}"
+      >
+        <button
+          type="submit"
+          class="thumb-counter d-flex flex-row align-items-center me-3 p-2 gap-1 text-danger border-0 bg-transparent"
+        >
+          <p class="my-auto">{{ auction.dislikes }}</p>
+          <i class="bi like-hands bi-hand-thumbs-down"></i>
+        </button>
+      </form>
+    </div>
     <p class="lead">
       Starting Bid: ${{ auction.starting_bid }}
       <br />Duration: {{ auction.duration }} days.
     </p>
-    <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-    {% for bid in bids %}
-      <div class="card mb-2" style="width: 18rem;">
+
+
+  </div>
+      {% if current_user.is_authenticated and current_user.role == 'admin' %} {%
+    for bid in bids %}
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+      <div class="col">
+      <div class="card-body">
+        <h5 class="card-title">Bid: ${{ bid.amount }}</h5>
+        <h6 class="card-subtitle mb-2 text-body-secondary">
+          By: {{ bid.username }}
+        </h6>
+        <p class="card-text">
+          <small class="text-body-secondary">At: {{ bid.created_at }}</small>
+        </p>
+      </div>
+      </div>
+    </div>
+    {% endfor %} {% else %}
+    <h3>Top two bids:</h3>
+    {% for bid in bids[:2] %}
+    <div class="d-grid flex-column gap-2 d-md-flex justify-content-md-start">
+      <div class="card mb-2" style="width: 18rem">
         <div class="card-body">
           <h5 class="card-title">Bid: ${{ bid.amount }}</h5>
-          <h6 class="card-subtitle mb-2 text-body-secondary">By: {{ bid.username }}</h6>
-          <p class="card-text"><small class="text-body-secondary">At: {{ bid.created_at }}</small></p>
+          <h6 class="card-subtitle mb-2 text-body-secondary">
+            By: {{ bid.username }}
+          </h6>
+          <p class="card-text">
+            <small class="text-body-secondary">At: {{ bid.created_at }}</small>
+          </p>
         </div>
       </div>
-    {% endfor %}
-      <a  href="{{ url_for('auctions_bp_sqlalchemy.add_bid_form', auction_id=auction.id) }}"
-          class="btn btn-primary btn-lg px-4 me-md-2">Place a Bid</a>
-
-      <!--       <button type="button" class="btn btn-primary btn-lg px-4 me-md-2">
-        Primary
-      </button>
-      <button type="button" class="btn btn-outline-secondary btn-lg px-4">
-        Default
-      </button> -->
     </div>
-  </div>
+    {% endfor %}
+    <a
+      href="{{ url_for('auctions_bp_sqlalchemy.add_bid_form', auction_id=auction.id) }}"
+      class="btn btn-primary btn-lg px-4 me-md-2"
+      >Place a Bid</a
+    >
+    {% endif %}
 </div>
 {% endblock %}
