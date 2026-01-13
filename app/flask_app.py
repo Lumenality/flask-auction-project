@@ -55,12 +55,14 @@ def registrera_blueprints(app):
     så att rutterna och funktionerna de innehåller blir tillgängliga.
     """
     # Imports
+    from .myblueprints.vue_frontend_bp.vue_frontend_bp import vue_frontend_bp
     from .myblueprints.auctions_bp_sqlalchemy.auctions_bp_sqlalchemy import auctions_bp_sqlalchemy
     from .myblueprints.auctions_rest_bp.auctions_rest_bp import auctions_rest_bp
     from .myblueprints.login_bp.login_bp import login_bp, login_manager # this app is registered with the loginmanager above
     from .myblueprints.search_bp.search_bp import search_bp
 
     # Registration
+    app.register_blueprint(vue_frontend_bp, url_prefix='/')
     app.register_blueprint(auctions_bp_sqlalchemy, url_prefix='/admin')
     app.register_blueprint(auctions_rest_bp, url_prefix='/api/v1/auctions')
     app.register_blueprint(login_bp, url_prefix='/user')

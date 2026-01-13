@@ -33,52 +33,22 @@
   </head>
   <body>
     <div id="app">
+      <Header></Header>
       <h1>VUE Frontend App</h1>
       {% block content %}{% endblock %}
-      <footer></footer>
+      <Footer></Footer>
     </div>
+    <script src="{{ url_for('vue_frontend_bp.static', filename='header_vue.js') }}"></script>
+    <script src="{{ url_for('vue_frontend_bp.static', filename='footer_vue.js') }}"></script>
+    <script src="{{ url_for('vue_frontend_bp.static', filename='auction_list_crud_component.js') }}"></script>
     <script>
       const api_url = "localhost:5000/api/v1/auctions";
-      const AuctionListCrudComponent = {
-        delimiters: ["[[", "]]"],
-        data() {
-          return {
-            auctions: [],
-            message: "Hello Vue!",
-          };
-        },
-        mounted() {
-          this.fetchAuctions();
-          console.log("Vue app mounted.");
-        },
-        methods: {
-          fetchAuctions() {
-            axios
-              .get(api_url)
-              .then((response) => {
-                this.auctions = response.data;
-                console.log("Auctions fetched:", this.auctions);
-              })
-              .catch((error) => {
-                console.error("Error fetching auctions:", error);
-              });
-          },
-        },
-        template: `
-          <div>
-            <h2>Auction List</h2>
-            <ul>
-              <li v-for="auction in auctions" :key="auction.id">
-                [[ auction.title ]] - [[ auction.description ]]
-              </li>
-            </ul>
-          </div>
-        `,
-      };
 
       const app = Vue.createApp({}); // End Vue.createApp
       app.component("auction-list", AuctionListCrudComponent);
-      app.component("footer", Footer);
+      app.component("header", HeaderVue);
+      app.component("footer", FooterVue);
+
       app.mount("#app");
     </script>
   </body>
