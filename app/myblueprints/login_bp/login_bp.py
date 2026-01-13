@@ -42,7 +42,7 @@ def secret():
         logout_url = url_for('login_bp.logout')
         if role == 'admin':
             # redirect to index
-            return redirect(url_for('index'))
+            return redirect(url_for('admin'))
         if role == 'superuser':
             return f"Welcome Superuser {username}! This is a secret superuser page. <a href='{logout_url}'>Logout</a>"
         if role == 'user':
@@ -80,12 +80,14 @@ def login():
     loginmessage = "Not logged in, to be able to add, delete or comment you myust be logged in with the right credentials"
     return render_template('login.html', form=form, loginmessage=loginmessage)
 
-@login_bp.route('/hashtest', methods=['GET'])
-def test_hash():
-    return render_template('hashtest.html')
+# @login_bp.route('/hashtest', methods=['GET'])
+# def test_hash():
+#     return render_template('hashtest.html')
 
-@login_bp.route('/hashtest', methods=['POST'])
-def test_hash_post():
+@login_bp.route('/hashtest', methods=['GET','POST'])
+def test_hash():
+    if request.method == 'GET':
+        return render_template('hashtest.html')
     password =  str(  (  (  (  request.form.get('password') ) ) ) )
     user_repo = UserRepository()
     hashed_password = user_repo.hash_password(password)
