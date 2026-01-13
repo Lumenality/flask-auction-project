@@ -7,3 +7,7 @@ auctions_api_url = 'http://localhost:5000/api/v1/auctions'
 @vue_frontend_bp.route('/')
 def vue_frontend():
     return render_template('home_vue.html')
+
+@vue_frontend_bp.route('/user_page')
+def user_page():
+    return render_template('user_page_vue.html')

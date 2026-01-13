@@ -1,0 +1,15 @@
+{% extends "base_vue.html" %}
+
+
+{% block title %}User page - {{ current_user.username }}{% endblock %}
+{% block content %}
+<h1>User Page</h1>
+<h2>Welcome, {{ current_user.username }}!</h2>
+
+<p>This is your user page.</p>
+
+<a type="button" class="btn btn-danger"
+    href="{{ url_for('login_bp.logout') }}">
+    Logout
+</a>
+{% endblock %}

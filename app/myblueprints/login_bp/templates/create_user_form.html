@@ -4,7 +4,7 @@
     <main class="form-signin">
         <form method="POST" action="{{ url_for('login_bp.create_user') }}">
             {{ form.hidden_tag() }}
-            <h1 class="h3 mb-3 fw-normal">Sign in to Auction Site</h1>
+            <h1 class="h3 mb-3 fw-normal">Sign up for Auction Site</h1>
             <div class="form-floating mb-3">
                 {{ form.username(class="form-control", id="usernameinput", placeholder="Enter your username", required=true, type="text") }}
                 <label for="usernameinput">{{ form.username.label.text }}</label>
@@ -21,7 +21,11 @@
                 {{ form.confirm_password(class="form-control", id="confirm_passwordinput", placeholder="Confirm your password", required=true, type="password") }}
                 <label for="confirm_passwordinput">{{ form.confirm_password.label.text }}</label>
             </div>
-            <button type="submit" class="btn btn-primary w-100 py-2">Login</button>
+            <button type="submit" class="btn btn-primary w-100 py-2">Sign up</button>
+            <a type="button"class="btn btn-secondary w-100 py-2 mt-2"
+                href="{{ url_for('login_bp.login') }}">
+                Back to Login
+            </a>
         </form>
     </main>
 </div>

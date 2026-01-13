@@ -15,6 +15,10 @@
             </div>
             <p>Don't have an account? <a href="{{ url_for('login_bp.create_user') }}">Create one</a></p>
             <button type="submit" class="btn btn-primary w-100 py-2">Login</button>
+            <a type="button"class="btn btn-secondary w-100 py-2 mt-2"
+                href="{{ url_for('index') }}">
+                Cancel
+            </a>
         </form>
     </main>
 </div>

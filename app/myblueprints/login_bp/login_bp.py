@@ -67,16 +67,18 @@ def login():
         print("Login: user found?", user)
         if not user:
             flash('No such username in database', 'danger')
-            return render_template('login.html', form=form)
+            return render_template('login_form.html', form=form)
         if bcrypt.check_password_hash(user.password_hash, password):
             login_user(user)
+            if user.role == 'admin':
+                return redirect(url_for('admin'))
             return redirect(url_for('index'))
         else:
             flash('Incorrect password', 'danger')
-            return render_template('login.html', form=form)
+            return render_template('login_form.html', form=form)
 
     loginmessage = "Not logged in, to be able to add, delete or comment you myust be logged in with the right credentials"
-    return render_template('login.html', form=form, loginmessage=loginmessage)
+    return render_template('login_form.html', form=form, loginmessage=loginmessage)
 
 @login_bp.route('/signup', methods=['GET', 'POST'])
 def create_user():
@@ -95,10 +97,6 @@ def create_user():
             return render_template('create_user_form.html', form=form)
         user_repo.add(username, email, user_repo.hash_password(password), role='user')
         flash('User created successfully. Please log in.', 'success')
-        form.username.data = ''
-        form.email.data = ''
-        form.password.data = ''
-        form.confirm_password.data = ''
         return redirect(url_for('login_bp.login'))
     return render_template('create_user_form.html', form=form)
 
