@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% block title %}{% endblock %}</title>
+    <meta charset="utf-8" />
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Bootstrap CSS, JS and Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    />
+    <!-- Vue -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- Custom CSS -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/frontend_vue.css') }}"
+    />
+  </head>
+  <body>
+    <div id="app">
+      <h1>VUE Frontend App</h1>
+      {% block content %}{% endblock %}
+      <footer></footer>
+    </div>
+    <script>
+      const api_url = "localhost:5000/api/v1/auctions";
+      const AuctionListCrudComponent = {
+        delimiters: ["[[", "]]"],
+        data() {
+          return {
+            auctions: [],
+            message: "Hello Vue!",
+          };
+        },
+        mounted() {
+          this.fetchAuctions();
+          console.log("Vue app mounted.");
+        },
+        methods: {
+          fetchAuctions() {
+            axios
+              .get(api_url)
+              .then((response) => {
+                this.auctions = response.data;
+                console.log("Auctions fetched:", this.auctions);
+              })
+              .catch((error) => {
+                console.error("Error fetching auctions:", error);
+              });
+          },
+        },
+        template: `
+          <div>
+            <h2>Auction List</h2>
+            <ul>
+              <li v-for="auction in auctions" :key="auction.id">
+                [[ auction.title ]] - [[ auction.description ]]
+              </li>
+            </ul>
+          </div>
+        `,
+      };
+
+      const app = Vue.createApp({}); // End Vue.createApp
+      app.component("auction-list", AuctionListCrudComponent);
+      app.component("footer", Footer);
+      app.mount("#app");
+    </script>
+  </body>
+</html>
