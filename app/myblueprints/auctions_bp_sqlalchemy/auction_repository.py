@@ -3,6 +3,7 @@ from sqlalchemy import create_engine, Column, Integer, String, Float
 from sqlalchemy import DateTime, ForeignKey, func
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
+from flask_login import login_required, current_user
 from typing import Optional, List
 # Create a Base class to define database models
 Base = declarative_base()
@@ -201,8 +202,10 @@ class AuctionRepository:
             return highest  # None if no bids yet
         
     def delete_bid(self, bid_id: int) -> None:
-        with self.Session() as session:
-            bid = session.query(Bid).filter_by(id=bid_id).first()
-            if bid:
-                session.delete(bid)
-                session.commit()
+        # If the user is authorized to delete the bid (admin)
+        if current_user.is_authenticated and getattr(current_user, "role", None) == 'admin':
+            with self.Session() as session:
+                bid = session.query(Bid).filter_by(id=bid_id).first()
+                if bid:
+                    session.delete(bid)
+                    session.commit()

@@ -139,4 +139,15 @@ def add_bid(auction_id):
 
     flash(f'You placed a bid of {request.form.get("amount")} on auction with id: {auction_id}.', 'success')
     return redirect(url_for('auctions_bp_sqlalchemy.get_auction_by_id', auction_id=auction_id))
+
+@auctions_bp_sqlalchemy.route('/bids/delete/<int:bid_id>', methods=['POST'])
+@login_required
+def delete_bid(bid_id):
+    # If the user is authorized to delete the bid (admin)
+    if current_user.is_admin:
+        auctions_repo.delete_bid(bid_id)
+        flash(f'You deleted the bid with id: {bid_id}.', 'success')
+        return redirect(request.referrer or url_for('auctions_bp_sqlalchemy.get_all_auctions'))
+    else:
+        return jsonify({"message": "You are not authorized to delete bids."}), 403
 # ------------------------ End of Bid Routes --------------------- #

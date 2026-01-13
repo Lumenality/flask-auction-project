@@ -57,12 +57,14 @@ def registrera_blueprints(app):
     # Imports
     from .myblueprints.auctions_bp_sqlalchemy.auctions_bp_sqlalchemy import auctions_bp_sqlalchemy
     from .myblueprints.auctions_rest_bp.auctions_rest_bp import auctions_rest_bp
-    from .myblueprints.login_bp.login_bp import login_bp, login_manager # also see how this app is registered with the loginmanager above
+    from .myblueprints.login_bp.login_bp import login_bp, login_manager # this app is registered with the loginmanager above
+    from .myblueprints.search_bp.search_bp import search_bp
 
     # Registration
     app.register_blueprint(auctions_bp_sqlalchemy, url_prefix='/auctions')
     app.register_blueprint(auctions_rest_bp, url_prefix='/api/v1/auctions')
-    app.register_blueprint(login_bp, url_prefix='/user')  # Login blueprint handles user login/logout
+    app.register_blueprint(login_bp, url_prefix='/user')
+    app.register_blueprint(search_bp, url_prefix='/search')
 
 def create_routes(app):
     """

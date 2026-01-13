@@ -77,16 +77,11 @@ auction.description }} {% endblock %} {%block content %}
       <br />Duration: {{ auction.duration }} days.
     </p>
   </div>
-{% if current_user.is_authenticated and current_user.role == 'admin' %}
-  {% for bid in bids %} {% include 'bid_card.html' %}
-  <form
-    method="post"
-    action="{{ url_for('auctions_bp_sqlalchemy.delete_bid', bid_id=bid.id, auction_id=auction.id) }}"
-  >
-    <button type="submit" class="btn btn-danger mb-4">Delete Bid</button>
-  </form>
-  {% endfor %}
-{% else %}
+  {% if current_user.is_authenticated and current_user.role == 'admin' %}
+    {% for bid in bids %} {% include 'bid_card.html' %}
+
+    {% endfor %}
+  {% else %}
   <h3>Top two bids:</h3>
   {% for bid in bids[:2] %} {% include 'bid_card.html' %} {% endfor %}
   <a
