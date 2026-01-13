@@ -1,3 +1,4 @@
+api_url = 'http://localhost:5000/api/v1/auctions';
 const AuctionListCrudComponent = {
         delimiters: ["[[", "]]"],
         data() {
@@ -23,14 +24,7 @@ const AuctionListCrudComponent = {
               });
           },
         },
-        template: `
-          <div>
-            <h2>Auction List</h2>
-            <ul>
-              <li v-for="auction in auctions" :key="auction.id">
-                [[ auction.title ]] - [[ auction.description ]]
-              </li>
-            </ul>
-          </div>
+        template: /*html*/ `
+        <div></div>
         `,
       };
