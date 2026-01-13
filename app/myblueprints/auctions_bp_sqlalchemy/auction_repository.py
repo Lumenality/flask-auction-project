@@ -19,6 +19,7 @@ class Auction(Base):
     dislikes = Column(Integer, default=0)
     bids = relationship("Bid", back_populates="auction", cascade="all, delete-orphan")
 
+# Define a Bid model that represents the 'bids' table in the database
 class Bid(Base):
     __tablename__ = "bids"
     id = Column(Integer, primary_key=True)
@@ -32,6 +33,16 @@ class Bid(Base):
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
 
     auction = relationship("Auction", back_populates="bids")
+
+# Define a UserLikesDislikes model that represents the 'user_likes_dislikes' table in the database
+# This table tracks which users have liked or disliked which auctions
+class UserLikesDislikes(Base):
+    __tablename__ = "user_likes_dislikes"
+    id = Column(Integer, primary_key=True)
+    username = Column(String(80), nullable=False)
+    auction_id = Column(Integer, ForeignKey("auctions.id"), nullable=False)
+    liked = Column(Integer, default=0)    # 1 if liked, 0 otherwise
+    disliked = Column(Integer, default=0) # 1 if disliked, 0 otherwise
 
 # Define a class to handle database operations for the Auction model 
 class AuctionRepository:
@@ -104,7 +115,8 @@ class AuctionRepository:
         with self.Session() as session:
             # Retrieve all auctions from the database
             return session.query(Auction).all()
-        
+    
+    # Methods to handle likes and dislikes
     def increment_likes_for_auction(self, auction_id):
         with self.Session() as session:
             # Find the auction to increment likes
@@ -115,7 +127,6 @@ class AuctionRepository:
                 return auction.likes
             else:
                 return None
-    
     def increment_dislikes_for_auction(self, auction_id):
         with self.Session() as session:
             # Find the auction to increment dislikes
@@ -127,6 +138,38 @@ class AuctionRepository:
             else:
                 return None
             
+    def decrement_likes_for_auction(self, auction_id):
+        with self.Session() as session:
+            # Find the auction to decrement likes
+            auction = session.query(Auction).filter_by(id=auction_id).first()
+            if auction and auction.likes > 0:
+                auction.likes -= 1
+                session.commit()
+                return auction.likes
+            else:
+                return None      
+    def decrement_dislikes_for_auction(self, auction_id):
+        with self.Session() as session:
+            # Find the auction to decrement dislikes
+            auction = session.query(Auction).filter_by(id=auction_id).first()
+            if auction and auction.dislikes > 0:
+                auction.dislikes -= 1
+                session.commit()
+                return auction.dislikes
+            else:
+                return None
+    
+    def has_user_liked_auction(self, username: str, auction_id: int) -> bool:
+        with self.Session() as session:
+            # Check if the user has liked the auction
+            print(f"Checking if user {username} has liked auction {auction_id}")
+            return None
+    def has_user_disliked_auction(self, username: str, auction_id: int) -> bool:
+        with self.Session() as session:
+            # Check if the user has disliked the auction
+            print(f"Checking if user {username} has disliked auction {auction_id}")
+            return None
+        
     def add_bid(self, auction_id: int, username: str, amount: int) -> Optional[Bid]:
         with self.Session() as session:
             auction = session.query(Auction).filter_by(id=auction_id).first()
@@ -156,3 +199,10 @@ class AuctionRepository:
                 .scalar()
             )
             return highest  # None if no bids yet
+        
+    def delete_bid(self, bid_id: int) -> None:
+        with self.Session() as session:
+            bid = session.query(Bid).filter_by(id=bid_id).first()
+            if bid:
+                session.delete(bid)
+                session.commit()

@@ -1,0 +1,13 @@
+{% extends "baselayout.html" %} 
+{% block title %}Password Hash Test{% endblock %}
+{% block content %}
+<h2>Password Hash Test</h2>
+<form method="post">
+  <label for="password">Enter Password to Hash:</label>
+  <input type="password" id="password" name="password" required />
+  <button type="submit">Hash Password</button>
+</form>
+{% if hashed_password %}
+<h3>Hashed Password:</h3>
+<p>{{ hashed_password }}</p>
+{% endif %} {% endblock %}

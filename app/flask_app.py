@@ -1,7 +1,7 @@
 from flask import Flask, render_template
 # from .database import init_db   # <- remove if not using Flask-SQLAlchemy
 from flask_login import LoginManager
-# from .models.user import User   # <- remove if not using models
+from flask_bcrypt import Bcrypt
 
 def skapa_app():
     """
@@ -15,9 +15,12 @@ def skapa_app():
     # Skapa själva Flask-applikationen
     app = Flask(__name__)
 
+    # Initialize Bcrypt for password hashing
+    bcrypt = Bcrypt(app)
+
     # SÄTT UPP APPENS INSTÄLLNINGAR
     app.config['SECRET_KEY'] = '86cff1dfb45dcaec470c4b3dfcfe6ee6'   # Behöv för att sessions/inloggning ska vara säkert
-
+    app.config['DB_URI'] = 'sqlite:///auctions_sqlalchemy.db'  # Databasens plats
     # REGISTRERA MODULES (BLUEPRINTS)
     # Varje blueprint är en del av appen, t.ex. "bostäder" eller "admin".
     registrera_blueprints(app)
@@ -30,24 +33,19 @@ def skapa_app():
     login_manager.init_app(app)                     # Koppla till appen
     login_manager.login_view = 'login_bp.login'      # Var ska man hamna om man inte är inloggad?
 
+    # Initialize Bcrypt for password hashing
+    bcrypt = Bcrypt(app)
+
     @login_manager.user_loader
     def load_user(user_id):
         """
         Denna funktion frågar databasen efter en användare med det sparade ID:t.
         Flask-Login behöver denna funktion för att återkoppla sessions till rätt user.
         """
-        # TEMPORÄR LÖSNING FÖR JSON - BYT UT MOT RIKTIG DATABAS
-        # Load user from JSON file (same as in login_bp.py)
-        import json
-        from .myblueprints.login_bp.login_bp import User
-        with open('app/myblueprints/login_bp/users.json') as f:
-            users_data = json.load(f)
-        for user in users_data:
-            if user['id'] == int(user_id):
-                return User(user['id'], user['username'], user['password'], user['role'])
-        return None
-    
-        #return User.query.get(int(user_id))
+        from .myblueprints.login_bp.login_repository import UserRepository
+        user_repo = UserRepository()
+
+        return user_repo.find_by_id(int(user_id))
 
     return app
 

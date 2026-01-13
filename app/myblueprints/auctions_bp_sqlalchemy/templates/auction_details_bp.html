@@ -76,46 +76,24 @@ auction.description }} {% endblock %} {%block content %}
       Starting Bid: ${{ auction.starting_bid }}
       <br />Duration: {{ auction.duration }} days.
     </p>
-
-
   </div>
-      {% if current_user.is_authenticated and current_user.role == 'admin' %} {%
-    for bid in bids %}
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-      <div class="col">
-      <div class="card-body">
-        <h5 class="card-title">Bid: ${{ bid.amount }}</h5>
-        <h6 class="card-subtitle mb-2 text-body-secondary">
-          By: {{ bid.username }}
-        </h6>
-        <p class="card-text">
-          <small class="text-body-secondary">At: {{ bid.created_at }}</small>
-        </p>
-      </div>
-      </div>
-    </div>
-    {% endfor %} {% else %}
-    <h3>Top two bids:</h3>
-    {% for bid in bids[:2] %}
-    <div class="d-grid flex-column gap-2 d-md-flex justify-content-md-start">
-      <div class="card mb-2" style="width: 18rem">
-        <div class="card-body">
-          <h5 class="card-title">Bid: ${{ bid.amount }}</h5>
-          <h6 class="card-subtitle mb-2 text-body-secondary">
-            By: {{ bid.username }}
-          </h6>
-          <p class="card-text">
-            <small class="text-body-secondary">At: {{ bid.created_at }}</small>
-          </p>
-        </div>
-      </div>
-    </div>
-    {% endfor %}
-    <a
-      href="{{ url_for('auctions_bp_sqlalchemy.add_bid_form', auction_id=auction.id) }}"
-      class="btn btn-primary btn-lg px-4 me-md-2"
-      >Place a Bid</a
-    >
-    {% endif %}
+{% if current_user.is_authenticated and current_user.role == 'admin' %}
+  {% for bid in bids %} {% include 'bid_card.html' %}
+  <form
+    method="post"
+    action="{{ url_for('auctions_bp_sqlalchemy.delete_bid', bid_id=bid.id, auction_id=auction.id) }}"
+  >
+    <button type="submit" class="btn btn-danger mb-4">Delete Bid</button>
+  </form>
+  {% endfor %}
+{% else %}
+  <h3>Top two bids:</h3>
+  {% for bid in bids[:2] %} {% include 'bid_card.html' %} {% endfor %}
+  <a
+    href="{{ url_for('auctions_bp_sqlalchemy.add_bid_form', auction_id=auction.id) }}"
+    class="btn btn-primary btn-lg px-4 me-md-2"
+    >Place a Bid</a
+  >
+  {% endif %}
 </div>
 {% endblock %}

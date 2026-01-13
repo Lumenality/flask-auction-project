@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, render_template, redirect, url_for, flash, make_response
 from flask_login import login_required, current_user
 from .auction_repository import AuctionRepository
-# remember to create auctionviews folder under templates folder since we have conflights with the same html file name in
+
 auctions_bp_sqlalchemy = Blueprint('auctions_bp_sqlalchemy', __name__,template_folder='templates')
 auctions_repo = AuctionRepository()
 
@@ -78,8 +78,12 @@ def delete_auction(auction_id):
 def like_auction(auction_id):
     # Placeholder function to handle liking an auction
     if current_user.is_authenticated:
-        auctions_repo.increment_likes_for_auction(auction_id)
-        return redirect(url_for('auctions_bp_sqlalchemy.get_auction_by_id', auction_id=auction_id))
+        # if user has already liked, remove the like
+        if auctions_repo.has_user_liked_auction(current_user.get_id(), auction_id):
+            auctions_repo.decrement_likes_for_auction(auction_id)
+        else:
+            auctions_repo.increment_likes_for_auction(auction_id)
+            return redirect(url_for('auctions_bp_sqlalchemy.get_auction_by_id', auction_id=auction_id))
     else:
         flash("You must be logged in to dislike an auction.", "error")
         return redirect(url_for('login_bp.login'))
@@ -88,7 +92,10 @@ def like_auction(auction_id):
 def dislike_auction(auction_id):
     # Placeholder function to handle disliking an auction
     if current_user.is_authenticated:
-        auctions_repo.increment_dislikes_for_auction(auction_id)
+        if auctions_repo.has_user_disliked_auction(current_user.get_id(), auction_id):
+            auctions_repo.decrement_dislikes_for_auction(auction_id)
+        else:
+            auctions_repo.increment_dislikes_for_auction(auction_id)
         return redirect(url_for('auctions_bp_sqlalchemy.get_auction_by_id', auction_id=auction_id))
     else:
         flash("You must be logged in to dislike an auction.", "error")

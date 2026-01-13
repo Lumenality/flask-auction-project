@@ -1,19 +1,13 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, request, url_for, flash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
+from flask_bcrypt import Bcrypt
 import json
+from .login_repository import UserRepository, User
 
-class User(UserMixin):
-    def __init__(self, id, username, password, role):
-        self.id = id
-        self.username = username
-        self.password = password
-        self.role = role
-        
-    @property
-    def is_admin(self):
-        return self.role == 'admin'
+login_bp = Blueprint('login_bp', __name__,template_folder='templates')
+user_repo = UserRepository()
     
 #create the class for the form
 class LoginForm(FlaskForm):
@@ -24,18 +18,17 @@ class LoginForm(FlaskForm):
 #Initialize the flask-login extension
 login_manager = LoginManager()#use in flask_app to init app
 login_manager.login_view = 'login_bp.login'
+#Initialize Bcrypt
+bcrypt = Bcrypt()
 
 @login_manager.user_loader #associates a function with Flask-Login to load user objects based on user IDs. It is a critical component of user session management and enables Flask-Login to recognize and manage user sessions effectively.
 def load_user(user_id):
-    # Load user from JSON file
-    with open('app/myblueprints/login_bp/users.json') as f:
-        users_data = json.load(f)
-
-    for user in users_data:
-        if user['id'] == int(user_id):
-            return User(user['id'], user['username'], user['password'], user['role'])
-    
-    return None
+    # Load user from database
+    user = user_repo.find_by_username(user_id)
+    if user:
+        return User(user.username, user.email, user.password_hash, user.role)
+    else:
+        return None
 
 login_bp = Blueprint('login_bp', __name__, template_folder='templates')
 
@@ -70,21 +63,34 @@ def login():
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
+        user = user_repo.find_by_username(username)
+        # Load users from database
+        if (not user):
+            flash('No such username in database', 'danger')
+            return render_template('login.html', form=form)
+        
+        if user and bcrypt.check_password_hash(user.password_hash, password):
+            login_user(user)
 
-        # Load users from JSON file
-        with open('app/myblueprints/login_bp/users.json') as f:
-            users_data = json.load(f)
-
-        for user in users_data:
-            if user['username'] == username and user['password'] == password:
-                user_obj = User(user['id'], user['username'], user['password'], user['role'])
-                login_user(user_obj)
-
-                return redirect(url_for('login_bp.secret'))
-
+            return redirect(url_for('login_bp.secret'))
+        else:
+            flash('Incorrect password', 'danger')
+            return render_template('login.html', form=form)
 
     loginmessage = "Not logged in, to be able to add, delete or comment you myust be logged in with the right credentials"
     return render_template('login.html', form=form, loginmessage=loginmessage)
+
+@login_bp.route('/hashtest', methods=['GET'])
+def test_hash():
+    return render_template('hashtest.html')
+
+@login_bp.route('/hashtest', methods=['POST'])
+def test_hash_post():
+    password =  str(  (  (  (  request.form.get('password') ) ) ) )
+    user_repo = UserRepository()
+    hashed_password = user_repo.hash_password(password)
+    flash(f'Hashed password: {hashed_password}', 'info')
+    return render_template('hashtest.html', hashed_password=hashed_password)
 
 @login_bp.route('/logout')
 @login_required
