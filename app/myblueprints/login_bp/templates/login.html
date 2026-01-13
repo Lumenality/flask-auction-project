@@ -1,21 +1,21 @@
-{% extends "base_flask.html" %}
-{% block title %}Login{% endblock %}
+{% extends "base_flask_clean.html" %}
 {% block content %}
-    <div class="container mt-3">
-    <h1>Login</h1>
-    {{loginmessage}}
-
+<div class="d-flex align-items-center justify-content-center vh-100 py-4 bg-body-tertiary rounded-3">
+    <main class="form-signin">
         <form method="POST" action="{{ url_for('login_bp.login') }}">
             {{ form.hidden_tag() }}
-            <div class="form-group">
-                {{ form.username.label }}
-                {{ form.username(class="form-control", placeholder="Enter your username", required=true) }}
+            <h1 class="h3 mb-3 fw-normal">Sign in to Auction Site</h1>
+            <div class="form-floating mb-3">
+                {{ form.username(class="form-control", id="floatingInput2", placeholder="Enter your username", required=true, type="text") }}
+                <label for="floatingInput2">{{ form.username.label.text }}</label>
             </div>
-            <div class="form-group">
-                {{ form.password.label }}
-                {{ form.password(class="form-control", placeholder="Enter your password", required=true) }}
+            <div class="form-floating mb-3">
+                {{ form.password(class="form-control", id="floatingPassword2", placeholder="Enter your password", required=true, type="password") }}
+                <label for="floatingPassword2">{{ form.password.label.text }}</label>
             </div>
-            <button type="submit" class="btn btn-primary">Login</button>
+            <p>Don't have an account? <a href="{{ url_for('login_bp.create_user') }}">Create one</a></p>
+            <button type="submit" class="btn btn-primary w-100 py-2">Login</button>
         </form>
-    </div>
+    </main>
+</div>
 {% endblock %}

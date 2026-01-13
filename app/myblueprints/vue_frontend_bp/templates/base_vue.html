@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{% block title %}{% endblock %}</title>
+  <meta charset="utf-8" />
+  <meta name="description" content="" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Bootstrap CSS, JS and Icons -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+    crossorigin="anonymous"
+  />
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+    crossorigin="anonymous"
+  ></script>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+  />
+  <!-- Vue -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <!-- Axios -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <!-- Custom CSS -->
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/frontend_vue.css') }}"
+  />
+</head>
+<body>
+
+<div id="app" class="mh-100 d-flex flex-column">
+  {% include 'header_vue.html' %}
+  <div class="container mt-4">
+  <h1>VUE Frontend App</h1>
+    {% block content %}{% endblock %}
+  </div>
+  {% include 'footer_vue.html' %}
+</div>
+
+<script src="{{ url_for('vue_frontend_bp.static', filename='auction_list_crud_component.js') }}"></script>
+<script>
+  // Create the Vue app
+  const app = Vue.createApp({}); // End Vue.createApp
+  // Register the components
+  app.component("auction-list", AuctionListCrudComponent);
+
+  // Mount the app
+  app.mount("#app");
+</script>
+</body>
+</html>

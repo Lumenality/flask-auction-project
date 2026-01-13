@@ -62,7 +62,7 @@ def registrera_blueprints(app):
     from .myblueprints.search_bp.search_bp import search_bp
 
     # Registration
-    app.register_blueprint(vue_frontend_bp, url_prefix='/')
+    app.register_blueprint(vue_frontend_bp)
     app.register_blueprint(auctions_bp_sqlalchemy, url_prefix='/admin')
     app.register_blueprint(auctions_rest_bp, url_prefix='/api/v1/auctions')
     app.register_blueprint(login_bp, url_prefix='/user')
@@ -76,8 +76,7 @@ def create_routes(app):
     @app.route('/')
     def index():
         """Den första sidan man ser (startsidan)."""
-        # 'home.html' ska ligga i mappen 'templates' i projektroten.
-        return render_template('home_vue.html', titel='Välkommen')
+        return redirect(url_for('vue_frontend_bp.vue_frontend'))
     
     @app.route('/admin')
     @login_required

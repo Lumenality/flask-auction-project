@@ -1,0 +1,28 @@
+{% extends "base_flask_clean.html" %}
+{% block content %}
+<div class="d-flex align-items-center justify-content-center vh-100 py-4 bg-body-tertiary rounded-3">
+    <main class="form-signin">
+        <form method="POST" action="{{ url_for('login_bp.create_user') }}">
+            {{ form.hidden_tag() }}
+            <h1 class="h3 mb-3 fw-normal">Sign in to Auction Site</h1>
+            <div class="form-floating mb-3">
+                {{ form.username(class="form-control", id="usernameinput", placeholder="Enter your username", required=true, type="text") }}
+                <label for="usernameinput">{{ form.username.label.text }}</label>
+            </div>
+            <div class="form-floating mb-3">
+                {{ form.email(class="form-control", id="emailinput", placeholder="Enter your email", required=true, type="email") }}
+                <label for="emailinput">{{ form.email.label.text }}</label>
+            </div>
+            <div class="form-floating mb-3">
+                {{ form.password(class="form-control", id="passwordinput", placeholder="Enter your password", required=true, type="password") }}
+                <label for="passwordinput">{{ form.password.label.text }}</label>
+            </div>
+            <div class="form-floating mb-3">
+                {{ form.confirm_password(class="form-control", id="confirm_passwordinput", placeholder="Confirm your password", required=true, type="password") }}
+                <label for="confirm_passwordinput">{{ form.confirm_password.label.text }}</label>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 py-2">Login</button>
+        </form>
+    </main>
+</div>
+{% endblock %}

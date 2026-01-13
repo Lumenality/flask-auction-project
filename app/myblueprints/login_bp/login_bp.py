@@ -9,11 +9,18 @@ from .login_repository import UserRepository, User
 login_bp = Blueprint('login_bp', __name__,template_folder='templates')
 user_repo = UserRepository()
     
-#create the class for the form
+#create the class for the login form
 class LoginForm(FlaskForm):
     username = StringField('Användarnamn')
     password = PasswordField('Lösenord')
     submit = SubmitField('Logga in')
+#create the class for the signup form
+class SignupForm(FlaskForm):
+    username = StringField('Användarnamn')
+    email = StringField('Email')
+    password = PasswordField('Lösenord')
+    confirm_password = PasswordField('Bekräfta Lösenord')
+    submit = SubmitField('Skapa användare')
 
 #Initialize the flask-login extension
 login_manager = LoginManager()#use in flask_app to init app
@@ -47,15 +54,8 @@ def secret():
             return f"Welcome Superuser {username}! This is a secret superuser page. <a href='{logout_url}'>Logout</a>"
         if role == 'user':
             return render_template('user_page.html', username=username, logout_url=logout_url)
-        
     else:
         return redirect(url_for('login_bp.login'))
-    '''
-    if role == 'admin' or role == 'superuser' or role == 'user':
-        flash(F'Hello {current_user.username}, you are logged in with {current_user.role} credentials')
-        return redirect(url_for('blog_bp.list_posts'))
-        #return f"Welcome {current_user.username}! This is a secret page."
-    '''
 
 @login_bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -64,15 +64,13 @@ def login():
         username = form.username.data
         password = form.password.data
         user = user_repo.find_by_username(username)
-        # Load users from database
-        if (not user):
+        print("Login: user found?", user)
+        if not user:
             flash('No such username in database', 'danger')
             return render_template('login.html', form=form)
-        
-        if user and bcrypt.check_password_hash(user.password_hash, password):
+        if bcrypt.check_password_hash(user.password_hash, password):
             login_user(user)
-
-            return redirect(url_for('login_bp.secret'))
+            return redirect(url_for('index'))
         else:
             flash('Incorrect password', 'danger')
             return render_template('login.html', form=form)
@@ -80,9 +78,29 @@ def login():
     loginmessage = "Not logged in, to be able to add, delete or comment you myust be logged in with the right credentials"
     return render_template('login.html', form=form, loginmessage=loginmessage)
 
-# @login_bp.route('/hashtest', methods=['GET'])
-# def test_hash():
-#     return render_template('hashtest.html')
+@login_bp.route('/signup', methods=['GET', 'POST'])
+def create_user():
+    form = SignupForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        email = form.email.data
+        password = form.password.data
+        password2 = form.confirm_password.data
+        if password != password2:
+            flash('Passwords do not match. Please try again.', 'danger')
+            return render_template('create_user_form.html', form=form)
+        existing_user = user_repo.find_by_username(username)
+        if existing_user:
+            flash('Username already exists. Please choose a different one.', 'danger')
+            return render_template('create_user_form.html', form=form)
+        user_repo.add(username, email, user_repo.hash_password(password), role='user')
+        flash('User created successfully. Please log in.', 'success')
+        form.username.data = ''
+        form.email.data = ''
+        form.password.data = ''
+        form.confirm_password.data = ''
+        return redirect(url_for('login_bp.login'))
+    return render_template('create_user_form.html', form=form)
 
 @login_bp.route('/hashtest', methods=['GET','POST'])
 def test_hash():
@@ -99,4 +117,4 @@ def test_hash():
 def logout():
     logout_user()
     #flash('You have been logged out.')
-    return redirect(url_for('login_bp.login'))
+    return redirect(url_for('index'))
