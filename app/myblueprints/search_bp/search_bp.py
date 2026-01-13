@@ -14,7 +14,7 @@ def search_items():
     ''' Fetch books from Google Books API based on user query'''
     form = SearchForm()
     search_query = "Mona Lisa" #default search query
-    api_url = "localhost:5000/api/v1/auctions" #Google Books API endpoint
+    api_url = "https://www.googleapis.com/books/v1/volumes" #Google Books API endpoint
 
     if request.method == 'POST':
         search_query = form.search_term.data

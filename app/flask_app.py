@@ -1,6 +1,6 @@
-from flask import Flask, render_template
+from flask import Flask, flash, redirect, render_template, url_for
 # from .database import init_db   # <- remove if not using Flask-SQLAlchemy
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user, login_required
 from flask_bcrypt import Bcrypt
 
 def skapa_app():
@@ -61,7 +61,7 @@ def registrera_blueprints(app):
     from .myblueprints.search_bp.search_bp import search_bp
 
     # Registration
-    app.register_blueprint(auctions_bp_sqlalchemy, url_prefix='/auctions')
+    app.register_blueprint(auctions_bp_sqlalchemy, url_prefix='/admin')
     app.register_blueprint(auctions_rest_bp, url_prefix='/api/v1/auctions')
     app.register_blueprint(login_bp, url_prefix='/user')
     app.register_blueprint(search_bp, url_prefix='/search')
@@ -71,17 +71,22 @@ def create_routes(app):
     Definierar rutterna som gäller hela appen (inte bara en modul).
     T.ex. startsidan och en test-rutt.
     """
-
-    @app.route("/hello")
-    def hello_world():
-        """Testar att allt fungerar."""
-        return "<p>Hej Världen! Min första Flask-app!</p>"
-
     @app.route('/')
     def index():
         """Den första sidan man ser (startsidan)."""
         # 'home.html' ska ligga i mappen 'templates' i projektroten.
-        return render_template('home.html', titel='Välkommen')
+        return render_template('home_vue.html', titel='Välkommen')
+    
+    @app.route('/admin')
+    @login_required
+    def admin():
+        """En enkel admin-sida."""
+        if current_user.is_admin:
+            return render_template('home_admin.html', titel='Admin-sida')
+        else:
+            flash("You must be logged in as admin to access this page.", "error")
+            return redirect(url_for('login_bp.login'))
+
 
 # HÄR STARTAS APPEN
 app = skapa_app()

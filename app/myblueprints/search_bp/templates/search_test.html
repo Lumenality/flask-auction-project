@@ -1,4 +1,4 @@
-{% extends 'baselayout.html' %} {% block title %} Search Test
+{% extends 'base_flask.html' %} {% block title %} Search Test
 {% endblock %} {% block content %}
 <h1 class="mb-4">Search Test Page (Google Books API)</h1>
   <form method="POST" action="{{ url_for('search_bp.search_items') }}">
