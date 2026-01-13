@@ -1,12 +1,13 @@
 # Import necessary modules from SQLAlchemy
-from sqlalchemy import create_engine, Column, Integer, String, Float
+from sqlalchemy import Boolean, create_engine, Column, Integer, String, Float
 from sqlalchemy import DateTime, ForeignKey, func
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 from flask_login import login_required, current_user
 from typing import Optional, List
-# Create a Base class to define database models
-Base = declarative_base()
+
+# Import the User Base from login_repository to share the same Base
+from ..login_bp.login_repository import Base, User
 
 # Define an Auction model that represents the 'auctions' table in the database
 class Auction(Base):
@@ -25,25 +26,23 @@ class Bid(Base):
     __tablename__ = "bids"
     id = Column(Integer, primary_key=True)
     auction_id = Column(Integer, ForeignKey("auctions.id"), nullable=False)
-
-    # Keep it simple for now (matches your “username” idea).
-    # Better long-term: store user_id and relate to a User table.
-    username = Column(String(80), nullable=False)
-
-    amount = Column(Integer, nullable=False)  # or Float, but Integer is simpler for currency-like bids
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    amount = Column(Integer, nullable=False)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
 
     auction = relationship("Auction", back_populates="bids")
+    user = relationship("User")  # Add relationship to User
 
 # Define a UserLikesDislikes model that represents the 'user_likes_dislikes' table in the database
-# This table tracks which users have liked or disliked which auctions
 class UserLikesDislikes(Base):
     __tablename__ = "user_likes_dislikes"
     id = Column(Integer, primary_key=True)
-    username = Column(String(80), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     auction_id = Column(Integer, ForeignKey("auctions.id"), nullable=False)
-    liked = Column(Integer, default=0)    # 1 if liked, 0 otherwise
-    disliked = Column(Integer, default=0) # 1 if disliked, 0 otherwise
+    liked = Column(Boolean, default=False)    # 1 if liked, 0 otherwise
+    disliked = Column(Boolean, default=False) # 1 if disliked, 0 otherwise
+    
+    user = relationship("User")  # Add relationship to User
 
 # Define a class to handle database operations for the Auction model 
 class AuctionRepository:
@@ -57,8 +56,6 @@ class AuctionRepository:
             Base.metadata.create_all(self.engine)
         except OperationalError:
             pass
-        ####
-        #Base.metadata.create_all(self.engine, checkfirst=True)
 
         # If the database is empty, populate it with sample data
         if not self.get_all():
@@ -67,7 +64,6 @@ class AuctionRepository:
             self.add(2, "Mona Lisa", 10000, 7,"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Mona_Lisa.jpg/256px-Mona_Lisa.jpg?20100608143407",0,0)
 
     def add(self, id: int, description: str, starting_bid: int, duration:int, image_url: Optional[str] = None, likes=0, dislikes=0) -> None:
-        # Add a new auction to the database
         session = self.Session()
         auction = Auction(
             id=id,
@@ -104,6 +100,7 @@ class AuctionRepository:
                 session.commit()
     
     def delete(self, auction_id: int) -> None:
+        '''Delete an auction by its ID'''
         with self.Session() as session:
             # Find the auction to delete
             auction = session.query(Auction).filter_by(id=auction_id).first()
@@ -113,71 +110,64 @@ class AuctionRepository:
                 session.commit()
 
     def get_all(self) -> List[Auction]:
+        '''Retrieve all auctions from the database'''
         with self.Session() as session:
-            # Retrieve all auctions from the database
             return session.query(Auction).all()
-    
-    # Methods to handle likes and dislikes
-    def increment_likes_for_auction(self, auction_id):
+                       
+    def toggle_like_dislike(self, user_id: int, auction_id: int, like: bool) -> None:
+        ''' Toggle either like or dislike for a user on a specific auction '''
         with self.Session() as session:
-            # Find the auction to increment likes
             auction = session.query(Auction).filter_by(id=auction_id).first()
-            if auction:
-                auction.likes += 1
-                session.commit()
-                return auction.likes
+            if not auction:
+                return
+
+            record = session.query(UserLikesDislikes).filter_by(
+                user_id=user_id, 
+                auction_id=auction_id
+            ).first()
+            if not record:
+                record = UserLikesDislikes(
+                    user_id=user_id,
+                    auction_id=auction_id,
+                    liked=like,
+                    disliked=not like
+                )
+                if like:
+                    auction.likes = auction.likes + 1
+                else:
+                    auction.dislikes = auction.dislikes + 1
+                session.add(record)
             else:
-                return None
-    def increment_dislikes_for_auction(self, auction_id):
-        with self.Session() as session:
-            # Find the auction to increment dislikes
-            auction = session.query(Auction).filter_by(id=auction_id).first()
-            if auction:
-                auction.dislikes += 1
-                session.commit()
-                return auction.dislikes
-            else:
-                return None
-            
-    def decrement_likes_for_auction(self, auction_id):
-        with self.Session() as session:
-            # Find the auction to decrement likes
-            auction = session.query(Auction).filter_by(id=auction_id).first()
-            if auction and auction.likes > 0:
-                auction.likes -= 1
-                session.commit()
-                return auction.likes
-            else:
-                return None      
-    def decrement_dislikes_for_auction(self, auction_id):
-        with self.Session() as session:
-            # Find the auction to decrement dislikes
-            auction = session.query(Auction).filter_by(id=auction_id).first()
-            if auction and auction.dislikes > 0:
-                auction.dislikes -= 1
-                session.commit()
-                return auction.dislikes
-            else:
-                return None
-    
-    def has_user_liked_auction(self, username: str, auction_id: int) -> bool:
-        with self.Session() as session:
-            # Check if the user has liked the auction
-            print(f"Checking if user {username} has liked auction {auction_id}")
-            return None
-    def has_user_disliked_auction(self, username: str, auction_id: int) -> bool:
-        with self.Session() as session:
-            # Check if the user has disliked the auction
-            print(f"Checking if user {username} has disliked auction {auction_id}")
-            return None
+                if like:
+                    if record.liked:
+                        record.liked = False
+                        auction.likes = auction.likes - 1
+                    else:
+                        record.liked = True
+                        auction.likes = auction.likes + 1
+                        if record.disliked:
+                            record.disliked = False
+                            auction.dislikes = auction.dislikes - 1
+                else:
+                    if record.disliked:
+                        record.disliked = False
+                        auction.dislikes = auction.dislikes - 1
+                    else:
+                        record.disliked = True
+                        auction.dislikes = auction.dislikes + 1
+                        if record.liked:
+                            record.liked = False
+                            auction.likes = auction.likes - 1
+
+            session.commit()
         
-    def add_bid(self, auction_id: int, username: str, amount: int) -> Optional[Bid]:
+    def add_bid(self, auction_id: int, user_id: int, amount: int) -> Optional[Bid]:
         with self.Session() as session:
             auction = session.query(Auction).filter_by(id=auction_id).first()
             if not auction:
                 return None
 
-            bid = Bid(auction_id=auction_id, username=username, amount=amount)
+            bid = Bid(auction_id=auction_id, user_id=user_id, amount=amount)
             session.add(bid)
             session.commit()
             session.refresh(bid)

@@ -96,14 +96,18 @@ def place_bid(auction_id):
     return jsonify(bid_data), 201
 
 @auctions_bp_rest.route('/<int:auction_id>/like', methods=['POST'])
+@login_required
 def like_auction(auction_id):
     """Ökar antal likes för en auktion."""
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'Authentication required'}), 401
     auction = auctions_repo.find_by_id(auction_id)
     
     if not auction:
         return jsonify({'error': 'Auktion inte hittad'}), 404
     
-    auctions_repo.like_auction(auction_id)
+    #toggle likes (if user has liked before, removes like)
+    auctions_repo.toggle_like_dislike(current_user.username, auction_id, like=True)
     updated_auction = auctions_repo.find_by_id(auction_id)
     
     return jsonify({
@@ -113,14 +117,18 @@ def like_auction(auction_id):
     }), 200
 
 @auctions_bp_rest.route('/<int:auction_id>/dislike', methods=['POST'])
+@login_required
 def dislike_auction(auction_id):
     """Ökar antal dislikes för en auktion."""
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'Authentication required'}), 401
     auction = auctions_repo.find_by_id(auction_id)
     
     if not auction:
         return jsonify({'error': 'Auktion inte hittad'}), 404
     
-    auctions_repo.dislike_auction(auction_id)
+    #toggle dislikes (if user has disliked before, removes dislike)
+    auctions_repo.toggle_like_dislike(current_user.username, auction_id, like=False)
     updated_auction = auctions_repo.find_by_id(auction_id)
     
     return jsonify({
@@ -128,20 +136,3 @@ def dislike_auction(auction_id):
         'likes': updated_auction.likes,
         'dislikes': updated_auction.dislikes
     }), 200
-
-@auctions_bp_rest.route('/current_user', methods=['GET'])
-def get_current_user():
-    """Returnerar information om den nuvarande användaren."""
-    if not current_user.is_authenticated:
-        return jsonify({'error': 'Ej inloggad'}), 401
-    
-    user_data = {
-        'username': current_user.username,
-        'email': current_user.email
-    }
-    return jsonify(user_data), 200
-
-@auctions_bp_rest.route('/vueauctions', methods=['GET'])
-def showvue():
-    """Visar Vue-auktionssidan."""
-    return render_template('vueauctions.html')
