@@ -1,4 +1,4 @@
-api_url = 'http://localhost:5000/api/v1/auctions';
+api_url = 'http://127.0.0.1:5000/api/v1/auctions';
 const AuctionListCrudComponent = {
   delimiters: ["[[", "]]"],
   data() {
@@ -59,50 +59,28 @@ const AuctionListCrudComponent = {
         });
     },
     viewAuction(auctionId) {
-      window.location.href = `/api/v1/auctions/${auctionId}`;
+      window.location.href = `/auctions/${auctionId}`;
+    },
+    filterAuctions(keyword) {
+      // Implement filtering logic based on criteria
+      this.auctions.filter(auction => {
+        // Example criteria check (to be customized)
+        return auction.description.includes(keyword);
+      });
     }
   },
   template: /*html*/ `
-    <div class="container mt-4">
-      <div class="row">
-        <div v-for="auction in auctions" :key="auction.id" class="col-md-4 mb-4">
-          <div class="card h-100">
-            <img :src="auction.image_url" class="card-img-top" :alt="auction.description" style="height: 200px; object-fit: cover;">
-            
-            <div class="card-body">
-              <h5 class="card-title">[[ auction.description ]]</h5>
-              <p class="card-text">
-
-                Nuvarande bud: <strong>[[ auction.current_bid ]] kr</strong><br>
-                Tid kvar: <strong>[[ auction.duration ]] dagar</strong>
-              </p>
-            </div>
-            
-            <!-- Card footer with likes/dislikes -->
-            <div class="card-footer d-flex justify-content-between align-items-center">
-              <div class="d-flex flex-row my-auto">
-              <button
-                @click="likeAuction(auction.id)"
-                class="thumb-counter d-flex flex-row align-items-center me-3 p-2 gap-1 text-success border-0 bg-transparent"
-              >
-                <p class="my-auto">[[ auction.likes ]]</p>
-                <i class="bi like-hands bi-hand-thumbs-up"></i>
-              </button>
-              <button
-                @click="dislikeAuction(auction.id)"
-                class="thumb-counter d-flex flex-row align-items-center me-3 p-2 gap-1 text-danger border-0 bg-transparent"
-              >
-                <p class="my-auto">[[ auction.dislikes ]]</p>
-                <i class="bi like-hands bi-hand-thumbs-down"></i>
-              </button>
-              </div>
-              <button @click="viewAuction(auction.id)" class="btn btn-sm btn-primary">
-                Visa detaljer
-              </button>
-            </div>
-          </div>
-        </div>
+  <div class="container mt-4">
+    <div class="row">
+      <div v-for="auction in auctions" :key="auction.id" class="col-md-4 mb-4">
+        <auctions-card
+          :auction="auction"
+          @like-auction="likeAuction"
+          @dislike-auction="dislikeAuction"
+          @view-auction="viewAuction"
+        ></auctions-card>
       </div>
     </div>
+  </div>
   `,
 };
