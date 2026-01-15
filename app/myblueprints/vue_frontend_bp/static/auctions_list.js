@@ -1,8 +1,22 @@
 const auctions_api_url = 'http://127.0.0.1:5000/api/v1/auctions';
 const user_api_url = 'http://127.0.0.1:5000/api/v1/users';
 const current_date = new Date();
+
 const AuctionListCrudComponent = {
   delimiters: ["[[", "]]"],
+
+  // NEW: allow passing auctions in instead of fetching
+  props: {
+    initialAuctions: {
+      type: Array,
+      default: null,
+    },
+    skipFetch: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
   data() {
     return {
       auctions: [],
@@ -18,10 +32,32 @@ const AuctionListCrudComponent = {
       showFilters: false
     };
   },
+
   mounted() {
-    this.fetchAuctions();
-    console.log("Vue app mounted.");
+    if (Array.isArray(this.initialAuctions) && this.initialAuctions.length > 0) {
+      this.auctions = this.initialAuctions;
+      this.foundAuctions = this.initialAuctions;
+      return;
+    }
+
+    if (!this.skipFetch) {
+      this.fetchAuctions();
+    }
   },
+
+  // Optional: keep in sync if prop changes
+  watch: {
+    initialAuctions: {
+      handler(newVal) {
+        if (Array.isArray(newVal)) {
+          this.auctions = newVal;
+          this.foundAuctions = newVal;
+        }
+      },
+      deep: true,
+    },
+  },
+
   methods: {
     fetchAuctions() {
       this.loading = true;

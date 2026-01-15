@@ -7,9 +7,11 @@
 <h2>Welcome, {{ current_user.username }}!</h2>
 
 <p>This is your user page.</p>
+<h3>Your Auctions:</h3>
 
-<a type="button" class="btn btn-danger"
-    href="{{ url_for('login_bp.logout') }}">
-    Logout
-</a>
+{% if user_auctions %}
+  <auctions-list :initial-auctions='{{ user_auctions | tojson }}' :skip-fetch="true"></auctions-list>
+{% else %}
+  <p>Du ligger inte som högsta bud på någon auktion.</p>
+{% endif %}
 {% endblock %}

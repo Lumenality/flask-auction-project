@@ -118,6 +118,15 @@ class AuctionRepository:
         '''Retrieve all auctions from the database'''
         with self.Session() as session:
             return session.query(Auction).all()
+    def get_all_for_user(self, user_id: int) -> List[Auction]:
+        '''Retrieve all auctions where user is the highest bidder'''
+        with self.Session() as session:
+            return (
+                session.query(Auction)
+                .join(Bid, Auction.id == Bid.auction_id)
+                .filter(Bid.user_id == user_id)
+                .all()
+            )
                        
     def toggle_like_dislike(self, user_id: int, auction_id: int, like: bool) -> None:
         ''' Toggle either like or dislike for a user on a specific auction '''

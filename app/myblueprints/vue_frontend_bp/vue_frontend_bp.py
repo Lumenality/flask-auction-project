@@ -1,4 +1,5 @@
-from flask import Blueprint, jsonify, request, render_template
+from flask import Blueprint, jsonify, request, render_template, redirect, url_for
+from flask_login import login_required, current_user
 from ..auctions_bp_sqlalchemy.auction_repository import AuctionRepository
 import json
 
@@ -25,6 +26,21 @@ def vue_auction_details(auction_id):
         auction_title = auction.description
     return render_template('auction_details_vue.html', auction_id=auction_id, auction_title=auction_title)
 
-@vue_frontend_bp.route('/user_page')
+@vue_frontend_bp.route('/user')
+@login_required
 def user_page():
-    return render_template('user_page_vue.html')
+    if not current_user.is_authenticated:
+        return redirect(url_for('login_bp.login'))
+    user_auctions = auctions_repo.get_all_for_user(current_user.id)
+    json_auctions = []
+    for auction in user_auctions:
+        json_auctions.append({
+            'id': auction.id,
+            'description': auction.description,
+            'starting_bid': auction.starting_bid,
+            'highest_bid': auction.highest_bid,
+            'end_time': auction.end_time.isoformat() if auction.end_time else None,
+            'image_url': auction.image_url
+        })
+    print(f'Json auctions are: {json_auctions}')
+    return render_template('user_page_vue.html', user_auctions=json_auctions)
