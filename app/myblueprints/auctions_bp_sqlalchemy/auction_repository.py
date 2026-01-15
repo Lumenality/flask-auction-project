@@ -172,9 +172,9 @@ class AuctionRepository:
                 return None
             if amount <= auction.starting_bid:
                 return None
-            highest_bid = self.get_highest_bid_amount(auction_id)
-            if highest_bid is not None and amount <= highest_bid:
+            if auction.highest_bid is not None and amount <= auction.highest_bid:
                 return None
+            auction.highest_bid = amount
             bid = Bid(auction_id=auction_id, user_id=user_id, amount=amount)
             session.add(bid)
             session.commit()
@@ -198,7 +198,6 @@ class AuctionRepository:
                 .limit(limit)
                 .all()
             )
-        
     def get_highest_bid_amount(self, auction_id: int) -> Optional[int]:
         with self.Session() as session:
             highest = (

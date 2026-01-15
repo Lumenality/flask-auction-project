@@ -24,7 +24,7 @@ const AuctionsCardComponent = {
               <h5 class="card-title">[[ auction.description ]]</h5>
               <p class="card-text">
 
-                Nuvarande bud: <strong>[[ auction.current_bid ]] kr</strong><br>
+                Nuvarande bud: <strong>[[ auction.highest_bid ]] kr</strong><br>
                 Tid kvar: <strong>[[ auction.duration ]] dagar</strong>
               </p>
             </div>

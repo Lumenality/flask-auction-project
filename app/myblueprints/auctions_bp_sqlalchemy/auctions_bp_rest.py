@@ -16,7 +16,7 @@ def get_all_auctions():
             'id': auction.id,
             'description': auction.description,
             'starting_bid': auction.starting_bid,
-            'current_bid': auction.current_bid if hasattr(auction, 'current_bid') else auction.starting_bid,
+            'highest_bid': auction.highest_bid,
             'duration': auction.duration,
             'image_url': auction.image_url,
             'likes': auction.likes,
@@ -36,7 +36,7 @@ def get_auction(auction_id):
         'id': auction.id,
         'description': auction.description,
         'starting_bid': auction.starting_bid,
-        'current_bid': auction.current_bid if hasattr(auction, 'current_bid') else auction.starting_bid,
+        'highest_bid': auction.highest_bid,
         'duration': auction.duration,
         'image_url': auction.image_url,
         'likes': auction.likes,
@@ -101,9 +101,8 @@ def place_bid(auction_id):
         return jsonify({'error': 'Budbelopp saknas'}), 400
     
     bid_amount = float(data['amount'])
-    current_highest = auction.current_bid if hasattr(auction, 'current_bid') else auction.starting_bid
     
-    if bid_amount <= current_highest:
+    if bid_amount <= auction.highest_bid:
         return jsonify({'error': 'Budet måste vara högre än nuvarande bud'}), 400
     
     new_bid = auctions_repo.add_bid(auction_id, current_user.id, bid_amount)

@@ -1,11 +1,17 @@
-api_url = 'http://127.0.0.1:5000/api/v1/auctions';
+const api_url = 'http://127.0.0.1:5000/api/v1/auctions';
+
 const AuctionListCrudComponent = {
   delimiters: ["[[", "]]"],
   data() {
     return {
       auctions: [],
+      foundAuctions: [],
       loading: false,
-      error: null
+      error: null,
+      // Search and filter fields
+      searchDescription: "",
+      minPrice: null,
+      maxPrice: null,
     };
   },
   mounted() {
@@ -20,6 +26,7 @@ const AuctionListCrudComponent = {
         .get(api_url)
         .then((response) => {
           this.auctions = response.data;
+          this.foundAuctions = response.data; // Initialize foundAuctions
           console.log("Auctions fetched:", this.auctions);
         })
         .catch((error) => {
@@ -61,18 +68,61 @@ const AuctionListCrudComponent = {
     viewAuction(auctionId) {
       window.location.href = `/auctions/${auctionId}`;
     },
-    filterAuctions(keyword) {
-      // Implement filtering logic based on criteria
-      this.auctions.filter(auction => {
-        // Example criteria check (to be customized)
-        return auction.description.includes(keyword);
+    applyFilters() { // Extended search method from my däckfirma project
+      const search = this.searchDescription || "";
+      const filteredAuctions = this.auctions.filter(auction => {
+        const matchesDescription = auction.description
+          ? auction.description.toLowerCase().includes(search.toLowerCase())
+          : true;
+        const meetsMin = this.minPrice !== null
+          ? auction.highest_bid >= this.minPrice 
+          : true;
+        const meetsMax = this.maxPrice !== null
+          ? auction.highest_bid <= this.maxPrice
+          : true;
+        return matchesDescription && meetsMin && meetsMax;
       });
+      this.foundAuctions = filteredAuctions;
+    },
+    clearFilters() {
+      this.searchDescription = "";
+      this.minPrice = null;
+      this.maxPrice = null;
+      this.foundAuctions = this.auctions;
     }
   },
   template: /*html*/ `
   <div class="container mt-4">
+    <div id="search-container">
+      <div id="search-fields">
+        <input
+          type="text"
+          id="description"
+          placeholder="Sök auktioner efter beskrivning"
+          v-model="searchDescription"
+          v-on:input="applyFilters"
+        />
+      </div>
+      <div id="price-filters" class="mt-3">
+        <input
+          type="number"
+          id="min-price"
+          placeholder="Min pris"
+          v-model.number="minPrice"
+          v-on:input="applyFilters"
+        />
+        <input
+          type="number"
+          id="max-price"
+          placeholder="Max pris"
+          v-model.number="maxPrice"
+          v-on:input="applyFilters"
+        />
+      </div>
+      <button class="btn btn-primary mt-3" @click="clearFilters">Clear filters</button>
+    </div>
     <div class="row">
-      <div v-for="auction in auctions" :key="auction.id" class="col-md-4 mb-4">
+      <div v-for="auction in foundAuctions" :key="auction.id" class="col-md-4 mb-4">
         <auctions-card
           :auction="auction"
           @like-auction="likeAuction"
@@ -82,5 +132,6 @@ const AuctionListCrudComponent = {
       </div>
     </div>
   </div>
+
   `,
 };

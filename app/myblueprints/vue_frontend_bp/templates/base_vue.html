@@ -44,8 +44,8 @@
 <!--  Linter is showing an error but it is working perfectly fine,
       I dont think it understands jinja in the context of js scripts -->
 <script>window.isAuthenticated = {{ 'true' if current_user.is_authenticated else 'false' }};</script>
-<script src="{{ url_for('vue_frontend_bp.static', filename='auction_list_crud_component.js') }}"></script>
-<script src="{{ url_for('vue_frontend_bp.static', filename='auctions_card.js') }}"></script>
+<script src="{{ url_for('vue_frontend_bp.static', filename='auctions_list.js') }}"></script>
+<script src="{{ url_for('vue_frontend_bp.static', filename='auction_card.js') }}"></script>
 <script src="{{ url_for('vue_frontend_bp.static', filename='auction_details.js') }}"></script>
 <script src="{{ url_for('vue_frontend_bp.static', filename='bid_card.js') }}"></script>
 <script>

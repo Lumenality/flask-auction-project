@@ -49,7 +49,7 @@ const AuctionDetailsComponent = {
         .post(`${api_url}/${this.auctionId}/bids`, { amount: amount })
         .then((response) => {
           this.bids.push(response.data);
-          this.fetchAuctionDetails(); // Refresh auction details to update highest bid
+          location.reload();
           console.log("Bid added:", response.data);
         })
         .catch((error) => {
@@ -122,8 +122,9 @@ const AuctionDetailsComponent = {
                 </div>
 
                 <p class="lead">
-                    Starting Bid: $[[ auction.starting_bid ]]
-                    <br />Duration: [[ auction.duration ]] days.
+                    Starting Bid: $[[ auction.starting_bid ]]<br>
+                    Current Highest Bid: $[[ auction.highest_bid ]]<br />
+                    Duration: [[ auction.duration ]] days.
                 </p>
             </div>
         </div>  
@@ -153,7 +154,7 @@ const AuctionDetailsComponent = {
             <form @submit.prevent="addBid($event.target.bidAmount.value)">
             <div class="mb-3">
                 <label for="bidAmount" class="form-label">Bid Amount</label>
-                <input type="number" class="form-control" id="bidAmount" name="bidAmount" required min="0" step="0.01">
+                <input type="number" class="form-control" id="bidAmount" name="bidAmount" :value="auction.highest_bid + 1" required :min="auction.highest_bid + 1" step="1">
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
