@@ -166,11 +166,11 @@ class AuctionRepository:
 
             session.commit()
         
-    def get_user_likes_dislikes(self, user_id: int) -> Optional[UserLikesDislikes]:
+    def get_user_likes_dislikes(self, user_id: int) -> List[UserLikesDislikes]:
         with self.Session() as session:
             return session.query(UserLikesDislikes).filter_by(
                 user_id=user_id
-            ).first()
+            ).all()
     def get_user_like_dislike_for_auction(self, user_id: int, auction_id: int) -> Optional[UserLikesDislikes]:
         with self.Session() as session:
             return session.query(UserLikesDislikes).filter_by(

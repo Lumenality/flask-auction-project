@@ -30,6 +30,7 @@ const BidCardComponent = {
     template: /*html*/ `
     <div class="card mb-2">
         <div class="card-body">
+            <p class="card-text text-black-50" style="font-size: 0.9em;">Bud ID: [[ bid.id ]]</p>
             <div v-if="bidder">
                 <h4 class="card-title">Budgivare: [[ bidder.username ]]</h4>
                 <a :href="'mailto:' + bidder.email">[[ bidder.email ]]</a>
@@ -37,7 +38,7 @@ const BidCardComponent = {
             <div v-else>
                 <span>Laddar budgivarinformation...</span>
             </div>
-            <p class="card-text">Bud ID: [[ bid.id ]]</p>
+            
             <p class="h5 card-text">Summa: [[ bid.amount ]] kr.</p>
         </div>
     </div>

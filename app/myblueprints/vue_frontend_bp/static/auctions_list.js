@@ -1,4 +1,5 @@
-const api_url = 'http://127.0.0.1:5000/api/v1/auctions';
+const auctions_api_url = 'http://127.0.0.1:5000/api/v1/auctions';
+const user_api_url = 'http://127.0.0.1:5000/api/v1/users';
 const current_date = new Date();
 const AuctionListCrudComponent = {
   delimiters: ["[[", "]]"],
@@ -6,6 +7,7 @@ const AuctionListCrudComponent = {
     return {
       auctions: [],
       foundAuctions: [],
+      current_user_id: window.currentUserId || null,
       loading: false,
       error: null,
       // Search and filter fields
@@ -24,7 +26,7 @@ const AuctionListCrudComponent = {
       this.loading = true;
       this.error = null;
       axios
-        .get(api_url)
+        .get(auctions_api_url)
         .then((response) => {
           this.auctions = response.data;
           this.foundAuctions = response.data; // Initialize foundAuctions
@@ -38,9 +40,16 @@ const AuctionListCrudComponent = {
           this.loading = false;
         });
     },
+    fetchUserLikesDislikes() {
+      axios
+        .get(`${user_api_url}/${this.current_user_id}/likes_dislikes`)
+        .then((response) => {
+          return response.data;
+        });
+    },
     likeAuction(auctionId) {
       axios
-        .post(`${api_url}/${auctionId}/like`)
+        .post(`${auctions_api_url}/${auctionId}/like`)
         .then((response) => {
           const auction = this.auctions.find(a => a.id === auctionId);
           if (auction) {
@@ -54,7 +63,7 @@ const AuctionListCrudComponent = {
     },
     dislikeAuction(auctionId) {
       axios
-        .post(`${api_url}/${auctionId}/dislike`)
+        .post(`${auctions_api_url}/${auctionId}/dislike`)
         .then((response) => {
           const auction = this.auctions.find(a => a.id === auctionId);
           if (auction) {

@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, render_template, request
+from flask import Blueprint, flash, jsonify, render_template, request
 from flask_login import current_user, login_required
 from .auction_repository import AuctionRepository
 
@@ -22,6 +22,7 @@ def get_all_auctions():
             'likes': auction.likes,
             'dislikes': auction.dislikes
         })
+    
     return jsonify(auctions_list), 200
 
 @auctions_bp_rest.route('/<int:auction_id>', methods=['GET'])
@@ -114,7 +115,7 @@ def place_bid(auction_id):
         'amount': new_bid.amount,
         'created_at': new_bid.created_at
     }
-    
+    flash(f"Du har lagt bud à {new_bid.amount} kr.", "success")
     return jsonify(bid_data), 201
 
 @auctions_bp_rest.route('/<int:auction_id>/like', methods=['POST'])

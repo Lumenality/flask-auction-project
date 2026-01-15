@@ -21,7 +21,7 @@ const AuctionDetailsComponent = {
       this.loading = true;
       this.error = null;
       axios
-        .get(`${api_url}/${this.auctionId}`)
+        .get(`${auctions_api_url}/${this.auctionId}`)
         .then((response) => {
           this.auction = response.data;
           console.log("Auction details fetched:", this.auction, this.bids);
@@ -36,7 +36,7 @@ const AuctionDetailsComponent = {
     },
     fetchBids() {
       axios
-        .get(`${api_url}/${this.auctionId}/bids`)
+        .get(`${auctions_api_url}/${this.auctionId}/bids`)
         .then((response) => {
           this.bids = response.data;
           console.log("Bids fetched:", this.bids);
@@ -47,7 +47,7 @@ const AuctionDetailsComponent = {
     },
     addBid(amount) {
       axios
-        .post(`${api_url}/${this.auctionId}/bids`, { amount: amount })
+        .post(`${auctions_api_url}/${this.auctionId}/bids`, { amount: amount })
         .then((response) => {
           this.bids.push(response.data);
           location.reload();
@@ -59,7 +59,7 @@ const AuctionDetailsComponent = {
     },
     likeAuction() {
       axios
-        .post(`${api_url}/${this.auctionId}/like`)
+        .post(`${auctions_api_url}/${this.auctionId}/like`)
         .then((response) => {
           if (this.auction) {
             this.auction.likes = response.data.likes;
@@ -72,7 +72,7 @@ const AuctionDetailsComponent = {
     },
     dislikeAuction() {
       axios
-        .post(`${api_url}/${this.auctionId}/dislike`)
+        .post(`${auctions_api_url}/${this.auctionId}/dislike`)
         .then((response) => {
           if (this.auction) {
             this.auction.likes = response.data.likes;
@@ -109,25 +109,13 @@ const AuctionDetailsComponent = {
                     [[ auction.description ]]
                 </h1>
                 <span class="text-black-50" style="font-size: 1rem">[[ formatDate() ]]</span>
-                <div class="d-flex flex-row mb-3">
-                    <button
-                        type="button"
-                        @click="likeAuction"
-                        class="thumb-counter d-flex flex-row align-items-center me-3 p-2 gap-1 text-success border-0 bg-transparent"
-                    >
-                        <p class="my-auto">[[ auction.likes ]]</p>
-                        <i class="bi like-hands bi-hand-thumbs-up"></i>
-                    </button>
-
-                    <button
-                        type="button"
-                        @click="dislikeAuction"
-                        class="thumb-counter d-flex flex-row align-items-center me-3 p-2 gap-1 text-danger border-0 bg-transparent"
-                    >
-                        <p class="my-auto">[[ auction.dislikes ]]</p>
-                        <i class="bi like-hands bi-hand-thumbs-down"></i>
-                    </button>
-                </div>
+                <like-dislike-buttons
+                  :auction-id="auction.id"
+                  :likes="auction.likes"
+                  :dislikes="auction.dislikes"
+                  @like-auction="likeAuction"
+                  @dislike-auction="dislikeAuction"
+                ></like-dislike-buttons>
 
                 <p class="lead">
                     Start bud: [[ auction.starting_bid ]] kr.<br>

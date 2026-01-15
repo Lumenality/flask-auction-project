@@ -36,6 +36,25 @@
 <div id="app" class="mh-100 d-flex flex-column">
   {% include 'header_vue.html' %}
   <div class="container mt-4">
+  {% with messages = get_flashed_messages(with_categories=true) %} {% if
+  messages %}
+  <div class="container mt-3">
+    {% for category, message in messages %}
+    <div
+      class="alert alert-{{ category }} alert-dismissible fade show"
+      role="alert"
+    >
+      {{ message }}
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      ></button>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %} {% endwith %}
   {% block content %}{% endblock %}
   </div>
   {% include 'footer_vue.html' %}
@@ -43,11 +62,38 @@
 
 <!--  Linter is showing an error but it is working perfectly fine,
       I dont think it understands jinja in the context of js scripts -->
-<script>window.isAuthenticated = {{ 'true' if current_user.is_authenticated else 'false' }};</script>
+<script>
+  window.isAuthenticated = {{ 'true' if current_user.is_authenticated else 'false' }};
+  window.currentUserId = {{ current_user.id if current_user.is_authenticated else 'null' }};
+  if (window.isAuthenticated) {
+      console.log("User is authenticated with ID:", window.currentUserId);
+      const user_likes_dislikes = {};
+      // function to populate user_likes_dislikes from api via axios
+      axios.get('/api/v1/users/' + window.currentUserId + '/likes_dislikes')
+          .then(response => {
+              response.data.forEach(item => {
+                  user_likes_dislikes[item.auction_id] = {
+                      has_liked: item.has_liked,
+                      has_disliked: item.has_disliked
+                  };
+              });
+              window.userLikesDislikes = user_likes_dislikes; // Expose globally
+          })
+          .catch(error => {
+              console.error("Error fetching user likes/dislikes:", error);
+          });
+      console.log("User Likes/Dislikes:", user_likes_dislikes);
+  } else {
+      console.log("User is not authenticated.");
+  }
+  
+</script>
+
 <script src="{{ url_for('vue_frontend_bp.static', filename='auctions_list.js') }}"></script>
 <script src="{{ url_for('vue_frontend_bp.static', filename='auction_card.js') }}"></script>
 <script src="{{ url_for('vue_frontend_bp.static', filename='auction_details.js') }}"></script>
 <script src="{{ url_for('vue_frontend_bp.static', filename='bid_card.js') }}"></script>
+<script src="{{ url_for('vue_frontend_bp.static', filename='like_dislike_buttons.js') }}"></script>
 <script>
   // Create the Vue app
   const app = Vue.createApp({}); // End Vue.createApp
@@ -56,6 +102,7 @@
   app.component("auctions-card", AuctionsCardComponent);
   app.component("auction-details", AuctionDetailsComponent);
   app.component("bid-card-component", BidCardComponent);
+  app.component("like-dislike-buttons", LikeDislikeButtonsComponent);
   // Mount the app
   app.mount("#app");
 </script>

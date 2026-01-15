@@ -1,9 +1,11 @@
 from flask import Blueprint, jsonify, render_template, request
 from flask_login import current_user, login_required
 from ..login_bp.login_repository import UserRepository
+from .auction_repository import AuctionRepository
 
 users_bp_rest = Blueprint('users_bp_rest', __name__, template_folder='templates', static_folder='static')
 users_repo = UserRepository()
+auctions_repo = AuctionRepository()
 
 @users_bp_rest.route('/', methods=['GET'])
 def get_all_users():
@@ -46,7 +48,7 @@ def get_user_likes_dislikes(user_id: int):
     """Hämtar alla likes och dislikes för en användare."""
     if current_user.id != user_id:
         return jsonify({'error': 'Åtkomst nekad'}), 403
-    user_likes_dislikes = users_repo.get_all_likes_dislikes_for_user(user_id)
+    user_likes_dislikes = auctions_repo.get_user_likes_dislikes(user_id)
     
     user_likes_dislikes_list = []
     for entry in user_likes_dislikes:
@@ -65,7 +67,7 @@ def get_like_dislike(user_id: int, auction_id: int):
     """Hämtar likes och dislikes för en användare på en specifik auktion."""
     if current_user.id != user_id:
         return jsonify({'error': 'Åtkomst nekad'}), 403
-    user_like_dislike = users_repo.get_user_like_dislike_for_auction(user_id, auction_id)
+    user_like_dislike = auctions_repo.get_user_like_dislike_for_auction(user_id, auction_id)
     
     if not user_like_dislike:
         return jsonify({'has_liked': False, 'has_disliked': False}), 200
