@@ -14,7 +14,8 @@ const AuctionListCrudComponent = {
       searchDescription: "",
       minPrice: null,
       maxPrice: null,
-      endDate: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString().split('T')[0] // Default end date 30 days from now
+      endDate: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString().split('T')[0],
+      showFilters: false
     };
   },
   mounted() {
@@ -109,48 +110,61 @@ const AuctionListCrudComponent = {
   },
   template: /*html*/ `
   <div class="container mt-4">
-    <div id="search-container">
-      <div id="search-fields">
+    <button class="btn btn-secondary w-100" style="background-color: #d2d2d2ff; color:#333;border:none;" @click="showFilters = !showFilters">
+      <i class="bi bi-filter"></i> [[ showFilters ? 'Dölj' : 'Visa' ]] filter
+    </button>
+     
+    <div id="search-container" class="mb-4 p-4" style="background-color: #f8f9fa;" v-if="showFilters">
+      <div id="search-fields" class="mb-3">
         <input
           type="text"
           id="description"
+          class="form-control"
           placeholder="Sök auktioner efter beskrivning"
           v-model="searchDescription"
           v-on:input="applyFilters"
         />
       </div>
-      <div id="price-filters" class="mt-3">
-        <input
-          type="number"
-          id="min-price"
-          placeholder="Min pris"
-          v-model.number="minPrice"
-          v-on:input="applyFilters"
-        />
-        <input
-          type="number"
-          id="max-price"
-          placeholder="Max pris"
-          v-model.number="maxPrice"
-          v-on:input="applyFilters"
-        />
+      <div id="price-filters" class="row g-2">
+        <div class="col-md-4">
+          <input
+            type="number"
+            id="min-price"
+            class="form-control"
+            placeholder="Min pris"
+            v-model.number="minPrice"
+            v-on:input="applyFilters"
+          />
+        </div>
+        <div class="col-md-4">
+          <input
+            type="number"
+            id="max-price"
+            class="form-control"
+            placeholder="Max pris"
+            v-model.number="maxPrice"
+            v-on:input="applyFilters"
+          />
+        </div>
+        <div id="date-filter" class="col-md-4">
+          <input
+            type="date"
+            id="end-date"
+            class="form-control"
+            name="end-date"
+            v-model="endDate"
+            :min="new Date().toISOString().split('T')[0]"
+            :value="endDate"
+            @input="applyFilters"
+          />
+        </div>
       </div>
-      <div id="date-filter" class="mt-3">
-      <label for="start">Senaste slutdatum:</label>
-      
-      <input
-        type="date"
-        id="start"
-        name="trip-start"
-        v-model="endDate"
-        :min="new Date().toISOString().split('T')[0]"
-        :value="endDate"
-        @input="applyFilters"
-        />
+
+      <div class="d-flex justify-content-end mt-3">
+        <button class="btn btn-secondary" @click="clearFilters">Rensa filter</button>
       </div>
-      <button class="btn btn-primary mt-3" @click="clearFilters">Rensa filter</button>
     </div>
-    <div class="row">
+    <div class="row mt-4">
       <div v-for="auction in foundAuctions" :key="auction.id" class="col-md-4 mb-4">
         <auctions-card
           :auction="auction"

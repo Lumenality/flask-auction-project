@@ -60,8 +60,8 @@
   {% include 'footer_vue.html' %}
 </div>
 
-<!--  Linter is showing an error but it is working perfectly fine,
-      I dont think it understands jinja in the context of js scripts -->
+<!--  Even if linter is showing a property assignment error here, the app works perfectly fine,
+      I dont think it understands jinja in the context of script tags -->
 <script>
   window.isAuthenticated = {{ 'true' if current_user.is_authenticated else 'false' }};
   window.currentUserId = {{ current_user.id if current_user.is_authenticated else 'null' }};
