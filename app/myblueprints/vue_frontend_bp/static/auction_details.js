@@ -5,6 +5,7 @@ const AuctionDetailsComponent = {
     return {
       auction: null,
       bids: [],
+      highestBid: null,
       loading: false,
       error: null,
       isAuthenticated: window.isAuthenticated === 'true' || window.isAuthenticated === true
@@ -38,6 +39,7 @@ const AuctionDetailsComponent = {
         .get(`${api_url}/${this.auctionId}/bids`)
         .then((response) => {
           this.bids = response.data;
+          this.auction.highest_bid = this.bids.length > 0 ? Math.max(...this.bids.map(bid => bid.amount)) : null;
           console.log("Bids fetched:", this.bids);
         })
         .catch((error) => {
@@ -49,6 +51,7 @@ const AuctionDetailsComponent = {
         .post(`${api_url}/${this.auctionId}/bids`, { amount: amount })
         .then((response) => {
           this.bids.push(response.data);
+          this.auction.highest_bid = amount;
           console.log("Bid added:", response.data);
         })
         .catch((error) => {
@@ -135,7 +138,7 @@ const AuctionDetailsComponent = {
             <h3>Top Bids:</h3>
             <div v-for="bid in bids" :key="bid.id" class="card mb-2">
                 <div class="card-body">
-                    <h5 class="card-title">Bidder: [[ bid.bidder_username ]]</h5>
+                    <h5 class="card-title">Bidder: [[ bid.user_id ]]</h5>
                     <p class="card-text">Amount: $[[ bid.amount ]]</p>
                 </div>
             </div>
@@ -151,12 +154,18 @@ const AuctionDetailsComponent = {
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            ...
+            <form @submit.prevent="addBid($event.target.bidAmount.value)">
+            <div class="mb-3">
+                <label for="bidAmount" class="form-label">Bid Amount</label>
+                <input type="number" class="form-control" id="bidAmount" name="bidAmount" required min="0" step="0.01">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Submit Bid</button>
+            </div>
+            </form>
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
-        </div>
+
         </div>
     </div>
     </div>

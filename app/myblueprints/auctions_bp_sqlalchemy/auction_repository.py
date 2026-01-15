@@ -166,7 +166,11 @@ class AuctionRepository:
             auction = session.query(Auction).filter_by(id=auction_id).first()
             if not auction:
                 return None
-
+            if amount <= auction.starting_bid:
+                return None
+            highest_bid = self.get_highest_bid_amount(auction_id)
+            if highest_bid is not None and amount <= highest_bid:
+                return None
             bid = Bid(auction_id=auction_id, user_id=user_id, amount=amount)
             session.add(bid)
             session.commit()

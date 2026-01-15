@@ -58,9 +58,10 @@ def get_auction_bids(auction_id):
         bids_list.append(
         {
             'id': bid.id,
+            'auction_id': bid.auction_id,
+            'user_id': bid.user_id,
             'amount': bid.amount,
-            'bidder': bid.bidder,
-            'timestamp': bid.timestamp.isoformat() if hasattr(bid, 'timestamp') else None
+            'created_at': bid.created_at
         })
 
     return jsonify(bids_list), 200
@@ -85,12 +86,13 @@ def place_bid(auction_id):
         return jsonify({'error': 'Budet måste vara högre än nuvarande bud'}), 400
     
     new_bid = auctions_repo.add_bid(auction_id, current_user.username, bid_amount)
-    
+    print(current_user.username)
     bid_data = {
         'id': new_bid.id,
+        'auction_id': new_bid.auction_id,
+        'user_id': new_bid.user_id,
         'amount': new_bid.amount,
-        'bidder': new_bid.bidder,
-        'timestamp': new_bid.timestamp.isoformat() if hasattr(new_bid, 'timestamp') else None
+        'created_at': new_bid.created_at
     }
     
     return jsonify(bid_data), 201

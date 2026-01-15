@@ -1,11 +1,13 @@
 /* This file contains styling for the front-end app */
+#app {
+  min-height:100vh;
+  display:flex;
+}
 h1 {
     font-size: 2em;
     color: #2f82ca;
 }
 .footer {
-    position: absolute;
-    bottom: 0;
     width: 100%;
     height: 60px;
     line-height: 60px;
