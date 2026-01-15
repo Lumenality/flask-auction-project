@@ -7,6 +7,7 @@ const AuctionDetailsComponent = {
       bids: [],
       loading: false,
       error: null,
+      end_time_formatted: null,
       isAuthenticated: window.isAuthenticated === 'true' || window.isAuthenticated === true
     };
   },
@@ -82,6 +83,13 @@ const AuctionDetailsComponent = {
           console.error("Error disliking auction:", error);
         });
     },
+    formatDate() {
+        if (this.auction && this.auction.end_time) {
+            const options = { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' };
+            const date = new Date(this.auction.end_time);
+            return date.toLocaleDateString('sv-SE', options).replace(',', '');
+        }
+    }
   },
   template: /*html*/ `
     <div class="container mt-4" v-if="auction">
@@ -100,7 +108,7 @@ const AuctionDetailsComponent = {
                 <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">
                     [[ auction.description ]]
                 </h1>
-
+                <span class="text-black-50" style="font-size: 1rem">[[ formatDate() ]]</span>
                 <div class="d-flex flex-row mb-3">
                     <button
                         type="button"
@@ -122,25 +130,32 @@ const AuctionDetailsComponent = {
                 </div>
 
                 <p class="lead">
-                    Starting Bid: $[[ auction.starting_bid ]]<br>
-                    Current Highest Bid: $[[ auction.highest_bid ]]<br />
-                    Duration: [[ auction.duration ]] days.
+                    Start bud: [[ auction.starting_bid ]] kr.<br>
+                    Högsta bud: [[ auction.highest_bid ]] kr.<br />
                 </p>
             </div>
         </div>  
         <!-- Button trigger modal -->
-        <button v-if="auction && isAuthenticated" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bidModal">
-        Add Bid
-        </button>
 
-        <div v-if="bids.length > 0">
-          <h3>Top Bids:</h3>
+
+      <div v-if="bids.length > 0">
+        <div class="d-flex flex-row align-items-center gap-3">
+        <h3 class="mb-0">Top Bids:</h3>
+        <button v-if="auction && isAuthenticated" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bidModal">
+          Add Bid
+        </button>
+        </div>
+        <div class="mt-3">
           <bid-card-component v-for="bid in bids" :key="bid.id" :bid="bid"></bid-card-component>
         </div>
-        <div v-else>
-          <h3 class="h4 text-muted">No bids yet. Be the first to bid!</h3>
-        </div>
-
+      </div>
+      <div v-else>
+        <h3 class="h4 text-muted">No bids yet. Be the first to bid!</h3>
+        <button v-if="auction && isAuthenticated" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bidModal">
+          Add Bid
+        </button>
+      </div>
+      
 
     <!-- Modal -->
     <div class="modal fade" id="bidModal" tabindex="-1" aria-labelledby="bidModalLabel" aria-hidden="true">

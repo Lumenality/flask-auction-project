@@ -9,8 +9,8 @@
 <div class="card-body">
     <h5 class="card-title">{{ auction.description }}</h5>
     <p class="card-text">
-    Starting Bid: ${{ auction.starting_bid }}
-    <br />Duration: {{ auction.duration }} days.
+    Starting Bid: {{ auction.starting_bid }} kr.<br />
+    <br />Ends at: {{ auction.end_time }}.
     </p>
     <div
     class="d-flex justify-content-between align-items-center"

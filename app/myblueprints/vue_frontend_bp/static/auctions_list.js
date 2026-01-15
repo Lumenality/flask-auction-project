@@ -1,5 +1,5 @@
 const api_url = 'http://127.0.0.1:5000/api/v1/auctions';
-
+const current_date = new Date();
 const AuctionListCrudComponent = {
   delimiters: ["[[", "]]"],
   data() {
@@ -12,6 +12,7 @@ const AuctionListCrudComponent = {
       searchDescription: "",
       minPrice: null,
       maxPrice: null,
+      endDate: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString().split('T')[0] // Default end date 30 days from now
     };
   },
   mounted() {
@@ -80,7 +81,12 @@ const AuctionListCrudComponent = {
         const meetsMax = this.maxPrice !== null
           ? auction.highest_bid <= this.maxPrice
           : true;
-        return matchesDescription && meetsMin && meetsMax;
+        const auctionEndDate = Date.parse(auction.end_time);
+        const filterEndDate = Date.parse(this.endDate);
+        const meetsEndDate = this.endDate
+          ? auctionEndDate <= filterEndDate
+          : true;
+        return matchesDescription && meetsMin && meetsMax && meetsEndDate;
       });
       this.foundAuctions = filteredAuctions;
     },
@@ -88,6 +94,7 @@ const AuctionListCrudComponent = {
       this.searchDescription = "";
       this.minPrice = null;
       this.maxPrice = null;
+      this.endDate = new Date(new Date().setDate(new Date().getDate() + 30)).toISOString().split('T')[0];
       this.foundAuctions = this.auctions;
     }
   },
@@ -119,7 +126,20 @@ const AuctionListCrudComponent = {
           v-on:input="applyFilters"
         />
       </div>
-      <button class="btn btn-primary mt-3" @click="clearFilters">Clear filters</button>
+      <div id="date-filter" class="mt-3">
+      <label for="start">Senaste slutdatum:</label>
+      
+      <input
+        type="date"
+        id="start"
+        name="trip-start"
+        v-model="endDate"
+        :min="new Date().toISOString().split('T')[0]"
+        :value="endDate"
+        @input="applyFilters"
+        />
+      </div>
+      <button class="btn btn-primary mt-3" @click="clearFilters">Rensa filter</button>
     </div>
     <div class="row">
       <div v-for="auction in foundAuctions" :key="auction.id" class="col-md-4 mb-4">

@@ -77,7 +77,7 @@ def update_auction(auction_id):
         auction_id,
         request.form.get('description'),
         float(request.form.get('starting_bid')),
-        int(request.form.get('duration')),
+        int(request.form.get('end_time')),
         request.form.get('image_url'))
     
     flash(f'You updated the auction with id: {auction_id}.', 'success')

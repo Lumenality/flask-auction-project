@@ -17,7 +17,7 @@ def get_all_auctions():
             'description': auction.description,
             'starting_bid': auction.starting_bid,
             'highest_bid': auction.highest_bid,
-            'duration': auction.duration,
+            'end_time': auction.end_time,
             'image_url': auction.image_url,
             'likes': auction.likes,
             'dislikes': auction.dislikes
@@ -37,7 +37,7 @@ def get_auction(auction_id):
         'description': auction.description,
         'starting_bid': auction.starting_bid,
         'highest_bid': auction.highest_bid,
-        'duration': auction.duration,
+        'end_time': auction.end_time,
         'image_url': auction.image_url,
         'likes': auction.likes,
         'dislikes': auction.dislikes

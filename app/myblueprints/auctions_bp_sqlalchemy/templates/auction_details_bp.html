@@ -74,7 +74,7 @@ auction.description }} {% endblock %} {%block content %}
     </div>
     <p class="lead">
       Starting Bid: ${{ auction.starting_bid }}
-      <br />Duration: {{ auction.duration }} days.
+      <br />Ends at: {{ auction.end_time }}.
     </p>
   </div>
   {% if current_user.is_authenticated and current_user.role == 'admin' %}

@@ -3,6 +3,10 @@ const AuctionsCardComponent = {
     auction: {
         type: Object,
         required: true
+    },
+    end_time_formatted: {
+        type: String,
+        required: false
     }
   },
   delimiters: ["[[", "]]"],
@@ -15,6 +19,13 @@ const AuctionsCardComponent = {
     },
     emitView(auctionId) {
         this.$emit('view-auction', auctionId);
+    },
+    formatDate() {
+        if (this.auction && this.auction.end_time) {
+            const options = { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' };
+            const date = new Date(this.auction.end_time);
+            return date.toLocaleDateString('sv-SE', options).replace(',', '');
+        }
     }
   },
   template: /*html*/ `
@@ -23,9 +34,9 @@ const AuctionsCardComponent = {
             <div class="card-body">
               <h5 class="card-title">[[ auction.description ]]</h5>
               <p class="card-text">
-
+                <span class="text-black-50" style="font-size: 1rem">[[ formatDate() ]]</span>
+                <br>
                 Nuvarande bud: <strong>[[ auction.highest_bid ]] kr</strong><br>
-                Tid kvar: <strong>[[ auction.duration ]] dagar</strong>
               </p>
             </div>
             

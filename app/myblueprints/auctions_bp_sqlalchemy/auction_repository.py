@@ -5,7 +5,7 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 from flask_login import login_required, current_user
 from typing import Optional, List
-
+from datetime import datetime, timedelta
 # Import the User Base from login_repository to share the same Base
 from ..login_bp.login_repository import Base, User
 
@@ -16,7 +16,7 @@ class Auction(Base):
     description = Column(String, nullable=False)
     starting_bid = Column(Integer, nullable=False)
     highest_bid = Column(Integer, nullable=True)
-    duration = Column(Integer, nullable=False)
+    end_time = Column(DateTime, nullable=False)
     image_url = Column(String(128), nullable=True)
     likes = Column(Integer, default=0)
     dislikes = Column(Integer, default=0)
@@ -66,12 +66,13 @@ class AuctionRepository:
 
     def add(self, id: int, description: str, starting_bid: int, duration:int, image_url: Optional[str] = None, likes=0, dislikes=0) -> None:
         session = self.Session()
+        end_time = datetime.now() + timedelta(days=duration) # duration is in days
         auction = Auction(
             id=id,
             description=description,
             starting_bid=starting_bid,
             highest_bid=starting_bid,
-            duration=duration,
+            end_time=end_time,
             image_url=image_url,
             likes=likes,
             dislikes=dislikes
@@ -85,7 +86,7 @@ class AuctionRepository:
             # Query the database for an auction with the specified ID
             return session.query(Auction).filter_by(id=auction_id).first()
     
-    def update(self, id: int, description: str, starting_bid: int, highest_bid: int, duration:int, image_url: Optional[str] = None) -> Optional[Auction]:
+    def update(self, id: int, description: str, starting_bid: int, highest_bid: int, end_time:int, image_url: Optional[str] = None) -> Optional[Auction]:
         with self.Session() as session:
             # Find the auction to update
             auction = session.query(Auction).filter_by(id=id).first()
@@ -97,8 +98,8 @@ class AuctionRepository:
                     auction.starting_bid = starting_bid
                 if highest_bid is not None:
                     auction.highest_bid = highest_bid
-                if duration is not None:
-                    auction.duration = duration
+                if end_time is not None:
+                    auction.end_time = end_time
                 if image_url is not None:
                     auction.image_url = image_url
                 session.commit()
@@ -164,6 +165,18 @@ class AuctionRepository:
                             auction.likes = auction.likes - 1
 
             session.commit()
+        
+    def get_user_likes_dislikes(self, user_id: int) -> Optional[UserLikesDislikes]:
+        with self.Session() as session:
+            return session.query(UserLikesDislikes).filter_by(
+                user_id=user_id
+            ).first()
+    def get_user_like_dislike_for_auction(self, user_id: int, auction_id: int) -> Optional[UserLikesDislikes]:
+        with self.Session() as session:
+            return session.query(UserLikesDislikes).filter_by(
+                user_id=user_id,
+                auction_id=auction_id
+            ).first()
         
     def add_bid(self, auction_id: int, user_id: int, amount: int) -> Optional[Bid]:
         with self.Session() as session:
