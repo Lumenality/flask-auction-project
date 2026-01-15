@@ -6,18 +6,18 @@ const AuctionsCardComponent = {
     }
   },
   delimiters: ["[[", "]]"],
-    methods: {
-        emitLike(auctionId) {
-            this.$emit('like-auction', auctionId);
-        },
-        emitDislike(auctionId) {
-            this.$emit('dislike-auction', auctionId);
-        },
-        emitView(auctionId) {
-            this.$emit('view-auction', auctionId);
-        }
+  methods: {
+    emitLike(auctionId) {
+        this.$emit('like-auction', auctionId);
     },
-    template: /*html*/ `
+    emitDislike(auctionId) {
+        this.$emit('dislike-auction', auctionId);
+    },
+    emitView(auctionId) {
+        this.$emit('view-auction', auctionId);
+    }
+  },
+  template: /*html*/ `
     <div class="card h-100">
         <img :src="auction.image_url" class="card-img-top" :alt="auction.description" style="height: 200px; object-fit: cover;">
             <div class="card-body">

@@ -47,6 +47,7 @@
 <script src="{{ url_for('vue_frontend_bp.static', filename='auction_list_crud_component.js') }}"></script>
 <script src="{{ url_for('vue_frontend_bp.static', filename='auctions_card.js') }}"></script>
 <script src="{{ url_for('vue_frontend_bp.static', filename='auction_details.js') }}"></script>
+<script src="{{ url_for('vue_frontend_bp.static', filename='bid_card.js') }}"></script>
 <script>
   // Create the Vue app
   const app = Vue.createApp({}); // End Vue.createApp
@@ -54,6 +55,7 @@
   app.component("auction-list", AuctionListCrudComponent);
   app.component("auctions-card", AuctionsCardComponent);
   app.component("auction-details", AuctionDetailsComponent);
+  app.component("bid-card-component", BidCardComponent);
   // Mount the app
   app.mount("#app");
 </script>

@@ -189,6 +189,15 @@ class AuctionRepository:
                 .order_by(Bid.created_at.desc())
                 .all()
             )
+    def get_highest_bids_for_auction(self, auction_id: int, limit: int = 2) -> List[Bid]:
+        with self.Session() as session:
+            return (
+                session.query(Bid)
+                .filter(Bid.auction_id == auction_id)
+                .order_by(Bid.amount.desc())
+                .limit(limit)
+                .all()
+            )
         
     def get_highest_bid_amount(self, auction_id: int) -> Optional[int]:
         with self.Session() as session:

@@ -45,14 +45,37 @@ def get_auction(auction_id):
     return jsonify(auction_data), 200
 
 @auctions_bp_rest.route('/<int:auction_id>/bids', methods=['GET'])
-def get_auction_bids(auction_id):
-    """Hämtar alla bud för en specifik auktion."""
+# def get_auction_bids(auction_id):
+#     """Hämtar alla bud för en specifik auktion."""
+#     auction = auctions_repo.find_by_id(auction_id)
+    
+#     if not auction:
+#         return jsonify({'error': 'Auktion inte hittad'}), 404
+    
+#     bids = auctions_repo.get_bids_for_auction(auction_id)
+#     bids_list = []
+#     for bid in bids:
+#         bids_list.append(
+#         {
+#             'id': bid.id,
+#             'auction_id': bid.auction_id,
+#             'user_id': bid.user_id,
+#             'amount': bid.amount,
+#             'created_at': bid.created_at
+#         })
+
+#     return jsonify(bids_list), 200
+
+# We only ever need the two highest bids for an auction
+# so we limit the number of bids returned to 2
+def get_two_highest_auction_bids(auction_id):
+    """Hämtar de två högsta buden för en specifik auktion."""
     auction = auctions_repo.find_by_id(auction_id)
     
     if not auction:
         return jsonify({'error': 'Auktion inte hittad'}), 404
     
-    bids = auctions_repo.get_bids_for_auction(auction_id)
+    bids = auctions_repo.get_highest_bids_for_auction(auction_id)
     bids_list = []
     for bid in bids:
         bids_list.append(

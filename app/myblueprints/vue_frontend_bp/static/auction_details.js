@@ -5,7 +5,6 @@ const AuctionDetailsComponent = {
     return {
       auction: null,
       bids: [],
-      highestBid: null,
       loading: false,
       error: null,
       isAuthenticated: window.isAuthenticated === 'true' || window.isAuthenticated === true
@@ -39,7 +38,6 @@ const AuctionDetailsComponent = {
         .get(`${api_url}/${this.auctionId}/bids`)
         .then((response) => {
           this.bids = response.data;
-          this.auction.highest_bid = this.bids.length > 0 ? Math.max(...this.bids.map(bid => bid.amount)) : null;
           console.log("Bids fetched:", this.bids);
         })
         .catch((error) => {
@@ -135,14 +133,11 @@ const AuctionDetailsComponent = {
         </button>
 
         <div v-if="bids.length > 0">
-            <h3>Top Bids:</h3>
-            <div v-for="bid in bids" :key="bid.id" class="card mb-2">
-                <div class="card-body">
-                    <h5 class="card-title">Bidder: [[ bid.user_id ]]</h5>
-                    <p class="card-text">Bid ID: [[ bid.id ]]</p>
-                    <p class="card-text">Amount: $[[ bid.amount ]]</p>
-                </div>
-            </div>
+          <h3>Top Bids:</h3>
+          <bid-card-component v-for="bid in bids" :key="bid.id" :bid="bid"></bid-card-component>
+        </div>
+        <div v-else>
+          <h3 class="h4 text-muted">No bids yet. Be the first to bid!</h3>
         </div>
 
 
