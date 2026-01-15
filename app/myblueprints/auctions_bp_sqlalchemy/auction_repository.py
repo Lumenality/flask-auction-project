@@ -15,6 +15,7 @@ class Auction(Base):
     id = Column(Integer, primary_key=True)
     description = Column(String, nullable=False)
     starting_bid = Column(Integer, nullable=False)
+    highest_bid = Column(Integer, nullable=True)
     duration = Column(Integer, nullable=False)
     image_url = Column(String(128), nullable=True)
     likes = Column(Integer, default=0)
@@ -59,7 +60,7 @@ class AuctionRepository:
 
         # If the database is empty, populate it with sample data
         if not self.get_all():
-            # id, description, starting_bid, duration, image_url, likes, dislikes
+            # id, description, starting_bid, highest_bid, duration, image_url, likes, dislikes
             self.add(1, "Skriet", 10000, 5, "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/The_Scream.jpg/256px-The_Scream.jpg?20160501101333",0,0)
             self.add(2, "Mona Lisa", 10000, 7,"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Mona_Lisa.jpg/256px-Mona_Lisa.jpg?20100608143407",0,0)
 
@@ -69,6 +70,7 @@ class AuctionRepository:
             id=id,
             description=description,
             starting_bid=starting_bid,
+            highest_bid=starting_bid,
             duration=duration,
             image_url=image_url,
             likes=likes,
@@ -83,7 +85,7 @@ class AuctionRepository:
             # Query the database for an auction with the specified ID
             return session.query(Auction).filter_by(id=auction_id).first()
     
-    def update(self, id: int, description: str, starting_bid: int, duration:int, image_url: Optional[str] = None) -> Optional[Auction]:
+    def update(self, id: int, description: str, starting_bid: int, highest_bid: int, duration:int, image_url: Optional[str] = None) -> Optional[Auction]:
         with self.Session() as session:
             # Find the auction to update
             auction = session.query(Auction).filter_by(id=id).first()
@@ -93,6 +95,8 @@ class AuctionRepository:
                     auction.description = description
                 if starting_bid is not None:
                     auction.starting_bid = starting_bid
+                if highest_bid is not None:
+                    auction.highest_bid = highest_bid
                 if duration is not None:
                     auction.duration = duration
                 if image_url is not None:

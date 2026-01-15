@@ -51,7 +51,7 @@ const AuctionDetailsComponent = {
         .post(`${api_url}/${this.auctionId}/bids`, { amount: amount })
         .then((response) => {
           this.bids.push(response.data);
-          this.auction.highest_bid = amount;
+          this.fetchAuctionDetails(); // Refresh auction details to update highest bid
           console.log("Bid added:", response.data);
         })
         .catch((error) => {
@@ -139,6 +139,7 @@ const AuctionDetailsComponent = {
             <div v-for="bid in bids" :key="bid.id" class="card mb-2">
                 <div class="card-body">
                     <h5 class="card-title">Bidder: [[ bid.user_id ]]</h5>
+                    <p class="card-text">Bid ID: [[ bid.id ]]</p>
                     <p class="card-text">Amount: $[[ bid.amount ]]</p>
                 </div>
             </div>

@@ -71,10 +71,8 @@ def get_auction_bids(auction_id):
 def place_bid(auction_id):
     """Placerar ett bud på en auktion."""
     auction = auctions_repo.find_by_id(auction_id)
-    
     if not auction:
         return jsonify({'error': 'Auktion inte hittad'}), 404
-    
     data = request.json
     if not data or 'amount' not in data:
         return jsonify({'error': 'Budbelopp saknas'}), 400
@@ -85,8 +83,8 @@ def place_bid(auction_id):
     if bid_amount <= current_highest:
         return jsonify({'error': 'Budet måste vara högre än nuvarande bud'}), 400
     
-    new_bid = auctions_repo.add_bid(auction_id, current_user.username, bid_amount)
-    print(current_user.username)
+    new_bid = auctions_repo.add_bid(auction_id, current_user.id, bid_amount)
+    print(current_user.id)
     bid_data = {
         'id': new_bid.id,
         'auction_id': new_bid.auction_id,
@@ -109,7 +107,7 @@ def like_auction(auction_id):
         return jsonify({'error': 'Auktion inte hittad'}), 404
     
     #toggle likes (if user has liked before, removes like)
-    auctions_repo.toggle_like_dislike(current_user.username, auction_id, like=True)
+    auctions_repo.toggle_like_dislike(current_user.id, auction_id, like=True)
     updated_auction = auctions_repo.find_by_id(auction_id)
     
     return jsonify({
@@ -130,7 +128,7 @@ def dislike_auction(auction_id):
         return jsonify({'error': 'Auktion inte hittad'}), 404
     
     #toggle dislikes (if user has disliked before, removes dislike)
-    auctions_repo.toggle_like_dislike(current_user.username, auction_id, like=False)
+    auctions_repo.toggle_like_dislike(current_user.id, auction_id, like=False)
     updated_auction = auctions_repo.find_by_id(auction_id)
     
     return jsonify({
