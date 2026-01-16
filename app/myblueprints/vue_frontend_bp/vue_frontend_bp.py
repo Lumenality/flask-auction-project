@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, render_template, redirect, url_for
+from flask import Blueprint, flash, jsonify, request, render_template, redirect, url_for
 from flask_login import login_required, current_user
 from ..auctions_bp_sqlalchemy.auction_repository import AuctionRepository
 import json
@@ -30,7 +30,11 @@ def vue_auction_details(auction_id):
 @login_required
 def user_page():
     if not current_user.is_authenticated:
+        flash('Du måste vara inloggad för att se din sida.', 'warning')
         return redirect(url_for('login_bp.login'))
+    if current_user.is_authenticated and current_user.is_admin:
+        flash('Administratörer har ingen användarsida.', 'warning')
+        return redirect(url_for('admin'))
     user_auctions = auctions_repo.get_all_for_user(current_user.id)
     json_auctions = []
     for auction in user_auctions:

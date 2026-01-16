@@ -76,9 +76,11 @@ def update_auction(auction_id):
     auctions_repo.update(
         auction_id,
         request.form.get('description'),
-        float(request.form.get('starting_bid')),
-        int(request.form.get('end_time')),
-        request.form.get('image_url'))
+        int(request.form.get('starting_bid')),
+        None, # highest_bid is not updated here
+        int(request.form.get('duration')),
+        request.form.get('image_url')
+    )
     
     flash(f'You updated the auction with id: {auction_id}.', 'success')
     return redirect(url_for('auctions_bp_sqlalchemy.get_auction_by_id', auction_id=auction_id))

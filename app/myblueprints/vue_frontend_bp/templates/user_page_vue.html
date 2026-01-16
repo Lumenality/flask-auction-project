@@ -3,11 +3,10 @@
 
 {% block title %}User page - {{ current_user.username }}{% endblock %}
 {% block content %}
-<h1>User Page</h1>
-<h2>Welcome, {{ current_user.username }}!</h2>
+<h1 class="display-5">Welcome, {{ current_user.username }}!</h1>
 
-<p>This is your user page.</p>
-<h3>Your Auctions:</h3>
+<p class="">Det här är din användarsida, här kan du se dina aktiva auktioner och dina högsta bud för snabbt se om du blivit överbjuden.</p>
+<h3>Dina aktiva auktioner:</h3>
 
 {% if user_auctions %}
   <auctions-list :initial-auctions='{{ user_auctions | tojson }}' :skip-fetch="true"></auctions-list>

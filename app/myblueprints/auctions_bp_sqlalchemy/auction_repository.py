@@ -86,7 +86,7 @@ class AuctionRepository:
             # Query the database for an auction with the specified ID
             return session.query(Auction).filter_by(id=auction_id).first()
     
-    def update(self, id: int, description: str, starting_bid: int, highest_bid: int, end_time:int, image_url: Optional[str] = None) -> Optional[Auction]:
+    def update(self, id: int, description: str, starting_bid: int, highest_bid: int, added_duration: int, image_url: Optional[str] = None) -> Optional[Auction]:
         with self.Session() as session:
             # Find the auction to update
             auction = session.query(Auction).filter_by(id=id).first()
@@ -95,11 +95,11 @@ class AuctionRepository:
                 if description is not None:
                     auction.description = description
                 if starting_bid is not None:
-                    auction.starting_bid = starting_bid
+                    auction.starting_bid = starting_bid         
                 if highest_bid is not None:
                     auction.highest_bid = highest_bid
-                if end_time is not None:
-                    auction.end_time = end_time
+                if added_duration is not None:
+                    auction.end_time = auction.end_time + timedelta(days=added_duration)  # duration is in days
                 if image_url is not None:
                     auction.image_url = image_url
                 session.commit()
@@ -228,6 +228,14 @@ class AuctionRepository:
                 .scalar()
             )
             return highest  # None if no bids yet
+    def get_user_highest_bid_for_auction(self, user_id: int, auction_id: int) -> Optional[Bid]:
+        with self.Session() as session:
+            return (
+                session.query(Bid)
+                .filter(Bid.auction_id == auction_id, Bid.user_id == user_id)
+                .order_by(Bid.amount.desc())
+                .first()
+            )
         
     def delete_bid(self, bid_id: int) -> None:
         # If the user is authorized to delete the bid (admin)

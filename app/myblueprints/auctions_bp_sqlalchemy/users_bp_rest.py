@@ -78,3 +78,24 @@ def get_like_dislike(user_id: int, auction_id: int):
     }
 
     return jsonify(data), 200
+
+@users_bp_rest.route('/<int:user_id>/highest_bids', methods=['GET'])
+@login_required
+def get_user_highest_bids(user_id: int):
+    """Hämtar användarens högsta bud för varje auktion."""
+    if current_user.id != user_id:
+        return jsonify({'error': 'Åtkomst nekad'}), 403
+    
+    auctions = auctions_repo.get_all_for_user(user_id)
+    highest_bids_list = []
+    
+    for auction in auctions:
+        highest_bid = auctions_repo.get_user_highest_bid_for_auction(user_id, auction.id)
+        if highest_bid:
+            highest_bids_list.append(
+                {
+                    'auction_id': auction.id,
+                    'highest_bid_amount': highest_bid.amount
+                })
+    print(f'This is the users highest_bids_list: {highest_bids_list}')
+    return jsonify(highest_bids_list), 200

@@ -19,6 +19,12 @@ const LikeDislikeButtonsComponent = {
       userLikesDislikes: window.userLikesDislikes || {}
     };
   },
+  mounted() {
+    // Initialize if not data present (for new auctions etc.)
+    if (!this.userLikesDislikes[this.auctionId]) {
+        this.userLikesDislikes[this.auctionId] = { has_liked: false, has_disliked: false };
+    }
+  },
   methods: {
     emitLike() {
         if (window.isAuthenticated !== 'true' && window.isAuthenticated !== true) {

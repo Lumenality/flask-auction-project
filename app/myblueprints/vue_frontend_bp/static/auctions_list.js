@@ -21,6 +21,7 @@ const AuctionListCrudComponent = {
     return {
       auctions: [],
       foundAuctions: [],
+      userHighestBids: [],
       current_user_id: window.currentUserId || null,
       loading: false,
       error: null,
@@ -29,7 +30,8 @@ const AuctionListCrudComponent = {
       minPrice: null,
       maxPrice: null,
       endDate: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString().split('T')[0],
-      showFilters: false
+      showFilters: false,
+      isUserPage: !this.skipFetch,
     };
   },
 
@@ -37,6 +39,10 @@ const AuctionListCrudComponent = {
     if (Array.isArray(this.initialAuctions) && this.initialAuctions.length > 0) {
       this.auctions = this.initialAuctions;
       this.foundAuctions = this.initialAuctions;
+      // FIX: Fetch user highest bids if user is logged in
+      if (this.current_user_id) {
+        this.fetchUserHighestBids();
+      }
       return;
     }
 
@@ -44,20 +50,6 @@ const AuctionListCrudComponent = {
       this.fetchAuctions();
     }
   },
-
-  // Optional: keep in sync if prop changes
-  watch: {
-    initialAuctions: {
-      handler(newVal) {
-        if (Array.isArray(newVal)) {
-          this.auctions = newVal;
-          this.foundAuctions = newVal;
-        }
-      },
-      deep: true,
-    },
-  },
-
   methods: {
     fetchAuctions() {
       this.loading = true;
@@ -76,6 +68,24 @@ const AuctionListCrudComponent = {
         .finally(() => {
           this.loading = false;
         });
+    },
+    fetchUserHighestBids() {
+      if (!this.current_user_id)
+        return;
+      axios
+        .get(`${user_api_url}/${this.current_user_id}/highest_bids`)
+        .then((response) => {
+          // Handle the response data as needed
+          console.log("User highest bids:", response.data);
+          this.userHighestBids = response.data;
+        })
+        .catch((error) => {
+          console.error("Error fetching user highest bids:", error);
+        });
+    },
+    getHighestUserBid(auctionId) {
+      const highest_user_bid = this.userHighestBids.find(bid => bid.auction_id === auctionId);
+      return highest_user_bid ? highest_user_bid.highest_bid_amount : null;
     },
     fetchUserLikesDislikes() {
       axios
@@ -142,7 +152,7 @@ const AuctionListCrudComponent = {
       this.maxPrice = null;
       this.endDate = new Date(new Date().setDate(new Date().getDate() + 30)).toISOString().split('T')[0];
       this.foundAuctions = this.auctions;
-    }
+    },
   },
   template: /*html*/ `
   <div class="container mt-4">
@@ -204,6 +214,8 @@ const AuctionListCrudComponent = {
       <div v-for="auction in foundAuctions" :key="auction.id" class="col-md-4 mb-4">
         <auctions-card
           :auction="auction"
+          :user-highest-bid="getHighestUserBid(auction.id)"
+          :is-user-page="isUserPage"
           @like-auction="likeAuction"
           @dislike-auction="dislikeAuction"
           @view-auction="viewAuction"

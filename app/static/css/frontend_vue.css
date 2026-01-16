@@ -1,4 +1,5 @@
 /* This file contains styling for the front-end app */
+
 #app {
   min-height:100vh;
   display:flex;

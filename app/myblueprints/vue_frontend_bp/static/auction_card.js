@@ -7,12 +7,26 @@ const AuctionsCardComponent = {
     end_time_formatted: {
         type: String,
         required: false
+    },
+    isUserPage: {
+        type: Boolean,
+        default: false
+    },
+    userHighestBid: {
+      type: Number,
+      default: null
     }
   },
   delimiters: ["[[", "]]"],
   data() {
     return {
-      userLikesDislikes: window.userLikesDislikes || {}
+      userLikesDislikes: window.userLikesDislikes || {},
+    };
+  },
+  mounted() {
+    // Determine user's highest bid for this auction if on user page
+    if (this.isUserPage) {
+      this.userHighestBidforThisAuction = this.getHighestUserBid();
     };
   },
   methods: {
@@ -38,16 +52,23 @@ const AuctionsCardComponent = {
       <img :src="auction.image_url" class="card-img-top" :alt="auction.description" style="height: 200px; object-fit: cover;">
       <div class="card-body">
         <h5 class="card-title">[[ auction.description ]]</h5>
-        <p class="card-text">
+        <div class="card-text">
           <span class="text-black-50" style="font-size: 1rem">[[ formatDate() ]]</span>
           <br>
-          Nuvarande bud: <strong>[[ auction.highest_bid ]] kr</strong><br>
-        </p>
+          <p v-if="userHighestBid !== null">Ditt högsta bud: 
+            <strong v-if="userHighestBid>=auction.highest_bid" class="text-success">
+              [[ userHighestBid ]] kr</strong>
+            <strong v-else class="text-danger">
+              [[ userHighestBid ]] kr (överbjuden)</strong>
+            </p>
+          <p>Nuvarande bud: <strong>[[ auction.highest_bid ]] kr</strong></p><br>
+        </div>
       </div>
         
       <!-- Card footer with likes/dislikes -->
       <div class="card-footer d-flex justify-content-between align-items-center">
         <like-dislike-buttons
+            v-if="isUserPage"
             :auction-id="auction.id"
             :likes="auction.likes"
             :dislikes="auction.dislikes"
