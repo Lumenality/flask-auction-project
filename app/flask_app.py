@@ -4,13 +4,7 @@ from flask_login import LoginManager, current_user, login_required
 from flask_bcrypt import Bcrypt
 
 def skapa_app():
-    """
-    Funktion som bygger och startar Flask-appen.
-
-    Varför behövs detta?
-    - Ger dig en tydlig plats där all konfiguration sker.
-    - Gör det lätt att testa din kod (eller använda olika inställningar).
-    """
+    """ Funktion som bygger och startar Flask-appen. """
 
     # Skapa själva Flask-applikationen
     app = Flask(__name__)
@@ -21,8 +15,8 @@ def skapa_app():
     # SÄTT UPP APPENS INSTÄLLNINGAR
     app.config['SECRET_KEY'] = '86cff1dfb45dcaec470c4b3dfcfe6ee6'   # Behöv för att sessions/inloggning ska vara säkert
     app.config['DB_URI'] = 'sqlite:///auctions_sqlalchemy.db'  # Databasens plats
+
     # REGISTRERA MODULES (BLUEPRINTS)
-    # Varje blueprint är en del av appen, t.ex. "bostäder" eller "admin".
     registrera_blueprints(app)
 
     # SKAPA DE VIKTIGA APP-ROUTES (t.ex. startsidan)
@@ -30,10 +24,10 @@ def skapa_app():
 
     # SÄTT UPP INLOGGNING (Flask-Login)
     login_manager = LoginManager()
-    login_manager.init_app(app)                     # Koppla till appen
-    login_manager.login_view = 'login_bp.login'      # Var ska man hamna om man inte är inloggad?
+    login_manager.init_app(app)
+    login_manager.login_view = 'login_bp.login'
 
-    # Initialize Bcrypt for password hashing
+    # Initialisera Bcrypt för lösenordshashning
     bcrypt = Bcrypt(app)
 
     @login_manager.user_loader
@@ -51,7 +45,7 @@ def skapa_app():
 
 def registrera_blueprints(app):
     """
-    Kopplar ihop alla dina olika moduler (blueprints) med huvudappen,
+    Kopplar ihop alla olika moduler (blueprints) med huvudappen,
     så att rutterna och funktionerna de innehåller blir tillgängliga.
     """
     # Imports
@@ -60,8 +54,6 @@ def registrera_blueprints(app):
     from .myblueprints.auctions_bp_sqlalchemy.auctions_bp_rest import auctions_bp_rest
     from .myblueprints.auctions_bp_sqlalchemy.users_bp_rest import users_bp_rest
     from .myblueprints.login_bp.login_bp import login_bp, login_manager # this app is registered with the loginmanager above
-    from .myblueprints.search_bp.search_bp import search_bp
-    
 
     # Registration
     app.register_blueprint(vue_frontend_bp)
@@ -69,13 +61,9 @@ def registrera_blueprints(app):
     app.register_blueprint(auctions_bp_rest, url_prefix='/api/v1/auctions')
     app.register_blueprint(users_bp_rest, url_prefix='/api/v1/users')
     app.register_blueprint(login_bp, url_prefix='/user')
-    app.register_blueprint(search_bp, url_prefix='/search')
 
 def create_routes(app):
-    """
-    Definierar rutterna som gäller hela appen (inte bara en modul).
-    T.ex. startsidan och en test-rutt.
-    """
+    """ Definierar rutter som gäller hela appen (inte bara en modul). """
     @app.route('/')
     def index():
         """Den första sidan man ser (startsidan)."""

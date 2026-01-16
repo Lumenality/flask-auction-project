@@ -23,12 +23,6 @@ const AuctionsCardComponent = {
       userLikesDislikes: window.userLikesDislikes || {},
     };
   },
-  mounted() {
-    // Determine user's highest bid for this auction if on user page
-    if (this.isUserPage) {
-      this.userHighestBidforThisAuction = this.getHighestUserBid();
-    };
-  },
   methods: {
     likeAuction(auctionId) {
         this.$emit('like-auction', auctionId);

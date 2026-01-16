@@ -95,6 +95,8 @@ def get_two_highest_auction_bids(auction_id):
 def place_bid(auction_id):
     """Placerar ett bud på en auktion."""
     auction = auctions_repo.find_by_id(auction_id)
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'Authentication required'}), 401
     if not auction:
         return jsonify({'error': 'Auktion inte hittad'}), 404
     data = request.json

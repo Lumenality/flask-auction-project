@@ -128,7 +128,7 @@ const AuctionDetailsComponent = {
 
       <div v-if="bids.length > 0">
         <div class="d-flex flex-row align-items-center gap-3">
-        <h3 class="mb-0">Top Bids:</h3>
+        <h2 class="mb-0">Högsta bud</h2>
         <button v-if="auction && isAuthenticated" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bidModal">
           Add Bid
         </button>
